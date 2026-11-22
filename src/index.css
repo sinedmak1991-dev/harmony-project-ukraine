@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@theme {
+  /* Палітра «Карпатський туман та Морська бірюза» (Nordic Mist & Botanical Teal) */
+  --color-harmony-dark: #12343B;     /* Глибокий фьорд / хвойно-бірюзовий (футер, заголовки, темні блоки) */
+  --color-harmony-primary: #2A7B6F;  /* Насичений ботанічний малахіт (кнопки, активні елементи) */
+  --color-harmony-emerald: #2A7B6F;  /* Бірюзово-зелений акцент для іконок та маркерів */
+  --color-harmony-sage: #DDF0EC;     /* М'яка підкладка під іконки та бейджі */
+  --color-harmony-cream: #F4F8F7;    /* Ранковий гірський туман — основний фон сторінки */
+  --color-harmony-sand: #E4EFEA;     /* Світла морська піна / евкаліпт для вторинних секцій */
+  --color-harmony-sky: #3898EC;      /* Чистий небесно-блакитний акцент */
+  --color-harmony-sun: #E6A15C;      /* Теплий бурштин (цифри статистики, маркери у футері) */
+  --color-harmony-ink: #334E52;      /* Глибокий приглушений графітово-хвойний для тексту */
+
+  /* Типографіка */
+  --font-serif: "Playfair Display", Georgia, Cambria, serif;
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  /* Органічна крива анімацій */
+  --ease-organic: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    background-color: var(--color-harmony-cream);
+    color: var(--color-harmony-ink);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
+  /* Видимий фокус для доступності клавіатури */
+  :focus-visible {
+    outline: 2px solid var(--color-harmony-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* ============================================================================
+ * ОРГАНІЧНІ CSS-АНІМАЦІЇ (Scroll Reveal + мікроанімації)
+ * ============================================================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Каскадні затримки для карток у сітках */
+.reveal-delay-100 {
+  transition-delay: 100ms;
+}
+.reveal-delay-200 {
+  transition-delay: 200ms;
+}
+.reveal-delay-300 {
+  transition-delay: 300ms;
+}
+.reveal-delay-400 {
+  transition-delay: 400ms;
+}
+.reveal-delay-500 {
+  transition-delay: 500ms;
+}
+
+/* М'яка поява елементів першого екрана без затримки на скрол */
+@keyframes heroFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-enter {
+  animation: heroFadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-enter-delayed {
+  animation: heroFadeUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+}
+
+/* М'яка органічна пульсація логотипу при наведенні */
+@keyframes logoBreath {
+  0%, 100% {
+    transform: scale(1.03);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+.logo-hover-organic {
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .logo-hover-organic {
+  transform: scale(1.04);
+  filter: drop-shadow(0 6px 14px rgba(42, 123, 111, 0.26));
+  animation: logoBreath 2.4s ease-in-out infinite;
+}
+
+/* Плавне повільне обертання декоративної Квітки Життя при наведенні на темні блоки */
+.seed-spin-hover {
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .seed-spin-hover {
+  transform: rotate(24deg) scale(1.04);
+}
+
+/* Легкий «подих вітру» та плавне погойдування для кульбаби на першому екрані */
+@keyframes dandelionBreeze {
+  0%, 100% {
+    transform: scale(1.03) translate3d(0px, 0px, 0);
+  }
+  50% {
+    transform: scale(1.065) translate3d(-6px, -4px, 0);
+  }
+}
+
+.dandelion-breeze {
+  animation: dandelionBreeze 11s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Повага до налаштування зменшеної анімації */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .hero-enter,
+  .hero-enter-delayed,
+  .dandelion-breeze {
+    animation: none !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

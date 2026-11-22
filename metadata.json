@@ -1,0 +1,6 @@
+{
+  "name": "The Harmony Project for Ukraine",
+  "description": "Освіта в гармонії з життям — освітня ініціатива для шкіл України, заснована на принципах природи.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
