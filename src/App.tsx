@@ -1077,13 +1077,17 @@ export default function App() {
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
             <div className="grid md:grid-cols-12 gap-10 pb-10 border-b border-white/12 items-center">
               <div className="md:col-span-6 space-y-4">
-                <div className="inline-block bg-white/95 rounded-2xl px-4 py-2.5">
+                <a
+                  href="#top"
+                  className="inline-flex items-center py-1 bg-transparent group focus-visible:rounded-xl"
+                  aria-label="The Harmony Project for Ukraine — на початок сторінки"
+                >
                   <img
                     src={MEDIA_ASSETS.logo}
                     alt="The Harmony Project for Ukraine"
-                    className="h-10 sm:h-11 w-auto object-contain"
+                    className="h-12 sm:h-14 w-auto object-contain bg-transparent logo-hover-organic"
                   />
-                </div>
+                </a>
                 <p className="text-sm text-slate-300 max-w-md leading-relaxed">
                   Освіта, заснована на принципах природи, що зміцнює добробут, стійкість і віру в майбутнє покоління України.
                 </p>

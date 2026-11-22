@@ -11,38 +11,41 @@
  *    акуратну ботанічну заглушку без зламаної іконки.
  */
 
+const withBase = (assetPath: string) =>
+  `${import.meta.env.BASE_URL}${assetPath.replace(/^\/+/, '')}`;
+
 export const MEDIA_ASSETS = {
-  // ОФІЦІЙНИЙ ЛОГОТИП (завантажений користувачем — при потребі можна замінити на '/images/logo.svg')
-  logo: '/assets/aistudio/5400000396752789151_4cc8c8cf.jpg',
+  // ОФІЦІЙНИЙ ПРОЗОРИЙ ЛОГОТИП (PNG із прозорим фоном: public/images/logo.png)
+  logo: withBase('images/logo.png'),
 
   // HERO IMAGE: Кульбаба (можна замінити на власне фото images/dandelion-hero.jpg)
-  heroDandelion: '/src/assets/images/hero_dandelion_macro_1795340951974.jpg',
+  heroDandelion: withBase('src/assets/images/hero_dandelion_macro_1795340951974.jpg'),
 
-  // ДОДАТКОВЕ ФОТО ДІТЕЙ У КОЛІ (для новин / галереї — можна замінити на '/images/hero-circle.jpg')
-  heroCircle: '/src/assets/images/hero_outdoor_circle_1795338778632.jpg',
+  // ДОДАТКОВЕ ФОТО ДІТЕЙ У КОЛІ (для новин / галереї — можна замінити на 'images/hero-circle.jpg')
+  heroCircle: withBase('src/assets/images/hero_outdoor_circle_1795338778632.jpg'),
 
-  // ОПОРА 1 (Цінності): замініть на '/images/pillar-1.jpg'
-  pillar1: '/src/assets/images/pillar_values_flowers_1795338778491.jpg',
+  // ОПОРА 1 (Цінності): замініть на 'images/pillar-1.jpg'
+  pillar1: withBase('src/assets/images/pillar_values_flowers_1795338778491.jpg'),
 
-  // ОПОРА 2 (Запити): замініть на '/images/pillar-2.jpg'
-  pillar2: '/src/assets/images/pillar_enquiry_binoculars_1795338778299.jpg',
+  // ОПОРА 2 (Запити): замініть на 'images/pillar-2.jpg'
+  pillar2: withBase('src/assets/images/pillar_enquiry_binoculars_1795338778299.jpg'),
 
-  // ОПОРА 3 (Принципи природи): замініть на '/images/pillar-3.jpg'
-  pillar3: '/src/assets/images/pillar_nature_principles_1795338777410.jpg',
+  // ОПОРА 3 (Принципи природи): замініть на 'images/pillar-3.jpg'
+  pillar3: withBase('src/assets/images/pillar_nature_principles_1795338777410.jpg'),
 
-  // ОПОРА 4 (Великі роботи): замініть на '/images/pillar-4.jpg'
-  pillar4: '/src/assets/images/pillar_great_works_1795338782561.jpg',
+  // ОПОРА 4 (Великі роботи): замініть на 'images/pillar-4.jpg'
+  pillar4: withBase('src/assets/images/pillar_great_works_1795338782561.jpg'),
 
-  // ВПЛИВ — КАРТКА 1 («Навчання, що зростає разом із дитиною»): замініть на '/images/nature-detail.jpg'
-  natureDetail: '/src/assets/images/impact_wellbeing_kids_1795338777905.jpg',
+  // ВПЛИВ — КАРТКА 1 («Навчання, що зростає разом із дитиною»): замініть на 'images/nature-detail.jpg'
+  natureDetail: withBase('src/assets/images/impact_wellbeing_kids_1795338777905.jpg'),
 
-  // ВПЛИВ — КАРТКА 2 («Підтримуємо дітей України сьогодні»): замініть на '/images/wellbeing.jpg'
-  wellbeing: '/src/assets/images/impact_ukraine_nature_1795338778783.jpg',
+  // ВПЛИВ — КАРТКА 2 («Підтримуємо дітей України сьогодні»): замініть на 'images/wellbeing.jpg'
+  wellbeing: withBase('src/assets/images/impact_ukraine_nature_1795338778783.jpg'),
 
-  // НОВИНИ: замініть на '/images/news-1.jpg', '/images/news-2.jpg', '/images/news-3.jpg'
-  news1: '/src/assets/images/hero_outdoor_circle_1795338778632.jpg',
-  news2: '/src/assets/images/pillar_great_works_1795338782561.jpg',
-  news3: '/src/assets/images/pillar_enquiry_binoculars_1795338778299.jpg',
+  // НОВИНИ: замініть на 'images/news-1.jpg', 'images/news-2.jpg', 'images/news-3.jpg'
+  news1: withBase('src/assets/images/hero_outdoor_circle_1795338778632.jpg'),
+  news2: withBase('src/assets/images/pillar_great_works_1795338782561.jpg'),
+  news3: withBase('src/assets/images/pillar_enquiry_binoculars_1795338778299.jpg'),
 } as const;
 
 export interface NavItem {

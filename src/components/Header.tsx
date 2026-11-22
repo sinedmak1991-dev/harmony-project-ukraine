@@ -58,23 +58,23 @@ export function Header({ activeSection }: HeaderProps) {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-white/95 backdrop-blur-md border-b border-teal-900/10 shadow-[0_6px_24px_-16px_rgba(18,52,59,0.18)]'
+          ? 'bg-harmony-cream/95 backdrop-blur-md border-b border-teal-900/10 shadow-[0_6px_24px_-16px_rgba(18,52,59,0.18)]'
           : 'bg-harmony-cream/95 backdrop-blur-sm border-b border-teal-900/10'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-6 lg:gap-8 h-[4.75rem] sm:h-20">
-          {/* Зона 1: Офіційний логотип із плавною органічною пульсацією при наведенні */}
+          {/* Зона 1: Прозорий PNG-логотип без білого фону чи рамок */}
           <a
             href="#top"
             onClick={handleNavClick}
-            className="flex items-center shrink-0 group focus-visible:rounded-xl"
+            className="inline-flex items-center py-1.5 shrink-0 bg-transparent group focus-visible:rounded-xl"
             aria-label="The Harmony Project for Ukraine — на початок сторінки"
           >
             <img
               src={MEDIA_ASSETS.logo}
               alt="The Harmony Project for Ukraine"
-              className="h-12 sm:h-14 w-auto object-contain mix-blend-multiply logo-hover-organic"
+              className="h-12 sm:h-14 w-auto object-contain bg-transparent logo-hover-organic"
             />
           </a>
 
