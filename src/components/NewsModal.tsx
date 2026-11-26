@@ -1,28 +1,36 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
-import type { NewsArticle } from '../data/harmonyContent';
+import type { LocalizedNewsArticle, SiteContent } from '../data/harmonyContent';
 import { MediaFrame } from './MediaFrame';
 
 interface NewsModalProps {
-  article: NewsArticle | null;
-  articles: NewsArticle[];
+  article: LocalizedNewsArticle | null;
+  articles: LocalizedNewsArticle[];
+  labels: SiteContent['newsSection']['modal'];
   onClose: () => void;
-  onSelectArticle: (article: NewsArticle) => void;
+  onSelectArticle: (articleId: string | number) => void;
 }
 
 /**
  * Модальне вікно новин із плавним CSS-відкриттям та закриттям
  * (backdrop-blur + scale-95 -> scale-100 + opacity).
  */
-export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsModalProps) {
+export function NewsModal({
+  article,
+  articles,
+  labels,
+  onClose,
+  onSelectArticle,
+}: NewsModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const [renderedArticle, setRenderedArticle] = useState<NewsArticle | null>(article);
+  const [renderedArticle, setRenderedArticle] = useState<LocalizedNewsArticle | null>(
+    article
+  );
   const [isEntered, setIsEntered] = useState(false);
 
   useEffect(() => {
     if (article) {
       setRenderedArticle(article);
-      // Запускаємо перехід на наступному кадрі для плавного scale-95 -> scale-100
       const frame = requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsEntered(true);
@@ -60,11 +68,8 @@ export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsM
 
   if (!renderedArticle) return null;
 
-  const currentIndex = articles.findIndex(
-    (item) => item.id === renderedArticle.id
-  );
-  const prevArticle =
-    currentIndex > 0 ? articles[currentIndex - 1] : null;
+  const currentIndex = articles.findIndex((item) => item.id === renderedArticle.id);
+  const prevArticle = currentIndex > 0 ? articles[currentIndex - 1] : null;
   const nextArticle =
     currentIndex >= 0 && currentIndex < articles.length - 1
       ? articles[currentIndex + 1]
@@ -95,7 +100,7 @@ export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsM
           ref={closeButtonRef}
           type="button"
           onClick={onClose}
-          aria-label="Закрити новину"
+          aria-label={labels.closeAria}
           className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/95 hover:bg-harmony-sand text-harmony-heading border border-emerald-900/10 flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm"
         >
           <X className="w-5 h-5" aria-hidden="true" />
@@ -157,20 +162,20 @@ export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsM
               {prevArticle && (
                 <button
                   type="button"
-                  onClick={() => onSelectArticle(prevArticle)}
+                  onClick={() => onSelectArticle(prevArticle.id)}
                   className="inline-flex items-center gap-1.5 text-xs font-medium text-harmony-ink hover:text-harmony-heading px-3.5 py-2 rounded-full border border-emerald-900/15 hover:bg-harmony-cream transition-colors"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
-                  Попередня
+                  {labels.prev}
                 </button>
               )}
               {nextArticle && (
                 <button
                   type="button"
-                  onClick={() => onSelectArticle(nextArticle)}
+                  onClick={() => onSelectArticle(nextArticle.id)}
                   className="inline-flex items-center gap-1.5 text-xs font-medium text-harmony-ink hover:text-harmony-heading px-3.5 py-2 rounded-full border border-emerald-900/15 hover:bg-harmony-cream transition-colors"
                 >
-                  Наступна
+                  {labels.next}
                   <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               )}
@@ -181,7 +186,7 @@ export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsM
               onClick={onClose}
               className="font-ui inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm font-semibold tracking-tight px-5 py-2.5 rounded-full shadow-xs transition-colors whitespace-nowrap"
             >
-              Зв’язатися з командою
+              {labels.contactCta}
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>

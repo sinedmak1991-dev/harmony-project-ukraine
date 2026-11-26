@@ -1,4 +1,8 @@
-import type { NewsArticle } from '../data/harmonyContent';
+import type {
+  Language,
+  LocalizedNewsArticle,
+  NewsArticle,
+} from '../data/harmonyContent';
 
 export const GOOGLE_SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbxJIH75q8KtqZGqjR0FaXE4XfXGGnMBqOYsTiJBGBrGyCls78aUzGsF4EyD_TypcIwZ/exec';
@@ -7,11 +11,16 @@ interface RawSheetNewsItem {
   id?: string | number;
   date?: string;
   category?: string;
+  category_en?: string;
   title?: string;
+  title_en?: string;
   excerpt?: string;
+  excerpt_en?: string;
   content?: string;
+  content_en?: string;
   image?: string;
   highlight?: string;
+  highlight_en?: string;
   readTime?: string;
   status?: string;
 }
@@ -46,16 +55,32 @@ const UKRAINIAN_MONTHS = [
   'грудня',
 ];
 
-function formatNewsDate(rawDate: unknown): string {
+const ENGLISH_MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+function formatNewsDate(rawDate: unknown, lang: Language): string {
   const value = typeof rawDate === 'string' ? rawDate.trim() : '';
   if (!value) return '';
 
-  // Якщо Google Таблиця повернула ISO-дату (наприклад, 2026-11-25T22:00:00.000Z), форматуємо її українською
+  // Якщо Google Таблиця повернула ISO-дату (наприклад, 2026-11-25T22:00:00.000Z), форматуємо її обраною мовою
   if (/^\d{4}-\d{2}-\d{2}/.test(value)) {
     const parsed = new Date(value);
     if (!Number.isNaN(parsed.getTime())) {
       const day = String(parsed.getDate()).padStart(2, '0');
-      const month = UKRAINIAN_MONTHS[parsed.getMonth()];
+      const months = lang === 'en' ? ENGLISH_MONTHS : UKRAINIAN_MONTHS;
+      const month = months[parsed.getMonth()];
       const year = parsed.getFullYear();
       return `${day} ${month} ${year}`;
     }
@@ -83,14 +108,21 @@ function sanitizeImageUrl(rawUrl: unknown): string {
   return '';
 }
 
-function estimateReadTime(paragraphs: string[]): string {
+function estimateReadTime(paragraphs: string[], lang: Language): string {
   const wordCount = paragraphs
     .join(' ')
     .trim()
     .split(/\s+/)
     .filter(Boolean).length;
   const minutes = Math.max(1, Math.ceil(wordCount / 180));
-  return `${minutes} хв читання`;
+  return lang === 'en' ? `${minutes} min read` : `${minutes} хв читання`;
+}
+
+function splitParagraphs(text: string): string[] {
+  return text
+    .split(/\r?\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
 }
 
 function normalizeNewsItem(raw: RawSheetNewsItem, index: number): NewsArticle | null {
@@ -101,48 +133,118 @@ function normalizeNewsItem(raw: RawSheetNewsItem, index: number): NewsArticle | 
   }
 
   const title = typeof raw.title === 'string' ? raw.title.trim() : '';
-  if (!title) return null;
+  const titleEn = typeof raw.title_en === 'string' ? raw.title_en.trim() : '';
+  if (!title && !titleEn) return null;
 
   const category =
     typeof raw.category === 'string' && raw.category.trim()
       ? raw.category.trim()
       : 'Новини';
+  const categoryEn =
+    typeof raw.category_en === 'string' && raw.category_en.trim()
+      ? raw.category_en.trim()
+      : undefined;
 
   const excerpt = typeof raw.excerpt === 'string' ? raw.excerpt.trim() : '';
+  const excerptEn = typeof raw.excerpt_en === 'string' ? raw.excerpt_en.trim() : '';
+
   const contentText = typeof raw.content === 'string' ? raw.content.trim() : '';
+  const contentTextEn = typeof raw.content_en === 'string' ? raw.content_en.trim() : '';
 
   const paragraphs = contentText
-    ? contentText
-        .split(/\r?\n+/)
-        .map((line) => line.trim())
-        .filter(Boolean)
+    ? splitParagraphs(contentText)
     : excerpt
       ? [excerpt]
       : [];
 
+  const paragraphsEn = contentTextEn
+    ? splitParagraphs(contentTextEn)
+    : excerptEn
+      ? [excerptEn]
+      : undefined;
+
   const finalExcerpt = excerpt || paragraphs[0] || '';
+  const finalExcerptEn = excerptEn || paragraphsEn?.[0] || undefined;
+
   const image = sanitizeImageUrl(raw.image);
-  const readTime =
+  const explicitReadTime =
     typeof raw.readTime === 'string' && raw.readTime.trim()
       ? raw.readTime.trim()
-      : estimateReadTime(paragraphs.length > 0 ? paragraphs : [finalExcerpt]);
+      : '';
+
+  const readTimeUk =
+    explicitReadTime ||
+    estimateReadTime(paragraphs.length > 0 ? paragraphs : [finalExcerpt], 'uk');
+  const readTimeEn =
+    explicitReadTime ||
+    estimateReadTime(
+      paragraphsEn && paragraphsEn.length > 0
+        ? paragraphsEn
+        : paragraphs.length > 0
+          ? paragraphs
+          : [finalExcerptEn || finalExcerpt],
+      'en'
+    );
 
   const highlight =
     typeof raw.highlight === 'string' && raw.highlight.trim()
       ? raw.highlight.trim()
       : undefined;
+  const highlightEn =
+    typeof raw.highlight_en === 'string' && raw.highlight_en.trim()
+      ? raw.highlight_en.trim()
+      : undefined;
 
   return {
     id: raw.id !== undefined && raw.id !== '' ? raw.id : `sheet-${index}`,
     category,
-    date: formatNewsDate(raw.date),
-    readTime,
-    title,
+    categoryEn,
+    dateUk: formatNewsDate(raw.date, 'uk'),
+    dateEn: formatNewsDate(raw.date, 'en'),
+    readTimeUk,
+    readTimeEn,
+    title: title || titleEn,
+    titleEn: titleEn || undefined,
     excerpt: finalExcerpt,
+    excerptEn: finalExcerptEn,
     image,
     placeholderPath: '',
-    imageAlt: title,
     paragraphs: paragraphs.length > 0 ? paragraphs : [finalExcerpt],
+    paragraphsEn,
+    highlight,
+    highlightEn,
+  };
+}
+
+/**
+ * Повертає локалізовану версію новини для обраної мови.
+ * Якщо для англійської мови поля перекладу порожні — плавно повертає український оригінал.
+ */
+export function localizeNewsArticle(
+  article: NewsArticle,
+  lang: Language
+): LocalizedNewsArticle {
+  const isEn = lang === 'en';
+  const title = isEn && article.titleEn ? article.titleEn : article.title;
+  const category = isEn && article.categoryEn ? article.categoryEn : article.category;
+  const excerpt = isEn && article.excerptEn ? article.excerptEn : article.excerpt;
+  const paragraphs =
+    isEn && article.paragraphsEn && article.paragraphsEn.length > 0
+      ? article.paragraphsEn
+      : article.paragraphs;
+  const highlight = isEn && article.highlightEn ? article.highlightEn : article.highlight;
+
+  return {
+    id: article.id,
+    category,
+    date: isEn ? article.dateEn : article.dateUk,
+    readTime: isEn ? article.readTimeEn : article.readTimeUk,
+    title,
+    excerpt,
+    image: article.image,
+    placeholderPath: article.placeholderPath,
+    imageAlt: title,
+    paragraphs,
     highlight,
   };
 }
@@ -213,7 +315,7 @@ export async function submitContactToSheet(payload: ContactSubmissionPayload): P
   });
 
   if (!response.ok) {
-    throw new Error(`Помилка сервера (${response.status}). Спробуйте ще раз.`);
+    throw new Error(`HTTP ${response.status}`);
   }
 
   const text = await response.text();
@@ -221,10 +323,14 @@ export async function submitContactToSheet(payload: ContactSubmissionPayload): P
     try {
       const parsed = JSON.parse(text) as { status?: string; message?: string };
       if (parsed.status === 'error') {
-        throw new Error(parsed.message || 'Не вдалося зберегти звернення.');
+        throw new Error(parsed.message || 'Submission failed');
       }
     } catch (err) {
-      if (err instanceof Error && err.message !== 'Unexpected token' && !err.message.includes('JSON')) {
+      if (
+        err instanceof Error &&
+        err.message !== 'Unexpected token' &&
+        !err.message.includes('JSON')
+      ) {
         throw err;
       }
     }

@@ -1,18 +1,21 @@
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, Loader2, Send, X } from 'lucide-react';
+import type { SiteContent } from '../data/harmonyContent';
 import { submitContactToSheet } from '../services/googleSheetsApi';
 
 interface JoinModalProps {
   isOpen: boolean;
   onClose: () => void;
+  labels: SiteContent['joinModal'];
+  errors: SiteContent['contactsSection']['errors'];
 }
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /**
- * Модальна форма «Долучитися» з відправкою заявок у Google Таблицю через Apps Script.
+ * Модальна форма «Долучитися / Join Us» з відправкою заявок у Google Таблицю через Apps Script.
  */
-export function JoinModal({ isOpen, onClose }: JoinModalProps) {
+export function JoinModal({ isOpen, onClose, labels, errors }: JoinModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [shouldRender, setShouldRender] = useState(isOpen);
   const [isEntered, setIsEntered] = useState(false);
@@ -25,13 +28,13 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState<keyof typeof errors | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
-      setError(null);
+      setErrorKey(null);
       const frame = requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsEntered(true);
@@ -79,19 +82,19 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
     const trimmedMessage = form.message.trim();
 
     if (trimmedName.length < 2) {
-      setError('Будь ласка, вкажіть ваше ім’я та прізвище.');
+      setErrorKey('name');
       return;
     }
     if (!EMAIL_PATTERN.test(trimmedEmail)) {
-      setError('Будь ласка, введіть коректну електронну адресу.');
+      setErrorKey('email');
       return;
     }
     if (trimmedMessage.length < 6) {
-      setError('Будь ласка, напишіть коротке повідомлення (щонайменше 6 символів).');
+      setErrorKey('message');
       return;
     }
 
-    setError(null);
+    setErrorKey(null);
     setIsSubmitting(true);
 
     try {
@@ -100,7 +103,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
         email: trimmedEmail,
         phone: form.phone,
         organization: form.organization,
-        topic: 'Заявка «Долучитися»',
+        topic: labels.topicForSheet,
         message: trimmedMessage,
       });
 
@@ -113,7 +116,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
         message: '',
       });
     } catch {
-      setError('Не вдалося надіслати звернення. Перевірте з’єднання з інтернетом і спробуйте ще раз.');
+      setErrorKey('network');
     } finally {
       setIsSubmitting(false);
     }
@@ -146,7 +149,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
           type="button"
           onClick={onClose}
           disabled={isSubmitting}
-          aria-label="Закрити форму"
+          aria-label={labels.closeAria}
           className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/95 hover:bg-harmony-sand text-harmony-heading border border-emerald-900/10 flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm disabled:opacity-50"
         >
           <X className="w-5 h-5" aria-hidden="true" />
@@ -154,16 +157,16 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
 
         <div className="pr-10 mb-6">
           <p className="text-xs sm:text-sm font-medium text-[#22A06B] mb-1.5">
-            Проєкт Гармонія для України
+            {labels.eyebrow}
           </p>
           <h3
             id="join-modal-title"
             className="font-serif text-2xl sm:text-3xl font-bold text-harmony-heading leading-snug"
           >
-            Долучитися до проєкту
+            {labels.title}
           </h3>
           <p className="text-sm text-harmony-ink mt-2 leading-relaxed text-justify hyphens-auto">
-            Залиште контакти, щоб впровадити підхід «Гармонії» у вашій школі або долучитися як партнер.
+            {labels.description}
           </p>
         </div>
 
@@ -173,13 +176,16 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
             className="p-6 rounded-2xl bg-harmony-sand border border-harmony-emerald/30 space-y-4"
           >
             <div className="flex items-start gap-3 text-harmony-heading">
-              <CheckCircle2 className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5" aria-hidden="true" />
+              <CheckCircle2
+                className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5"
+                aria-hidden="true"
+              />
               <div>
                 <p className="font-serif font-bold text-lg text-harmony-heading">
-                  Дякуємо! Ваше звернення успішно надіслано.
+                  {labels.successTitle}
                 </p>
                 <p className="text-sm text-harmony-ink mt-1 leading-relaxed">
-                  Ми зв’яжемося з вами найближчим часом.
+                  {labels.successDescription}
                 </p>
               </div>
             </div>
@@ -189,14 +195,14 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                 onClick={onClose}
                 className="inline-flex items-center justify-center bg-harmony-primary hover:bg-harmony-primary-hover text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-colors"
               >
-                Повернутися на сайт
+                {labels.returnButton}
               </button>
               <button
                 type="button"
                 onClick={() => setSubmitted(false)}
                 className="inline-flex items-center text-sm font-semibold text-harmony-primary hover:text-harmony-primary-hover transition-colors"
               >
-                Надіслати ще одне звернення
+                {labels.sendAnother}
               </button>
             </div>
           </div>
@@ -208,7 +214,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   htmlFor="join-name"
                   className="block text-sm font-medium text-harmony-ink mb-1.5"
                 >
-                  Ваше ім’я *
+                  {labels.nameLabel}
                 </label>
                 <input
                   type="text"
@@ -218,9 +224,9 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   value={form.name}
                   onChange={(e) => {
                     setForm((prev) => ({ ...prev, name: e.target.value }));
-                    if (error) setError(null);
+                    if (errorKey) setErrorKey(null);
                   }}
-                  placeholder="Олена Коваленко"
+                  placeholder={labels.namePlaceholder}
                   className="w-full px-4 py-2.5 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 disabled:opacity-60"
                 />
               </div>
@@ -230,7 +236,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   htmlFor="join-email"
                   className="block text-sm font-medium text-harmony-ink mb-1.5"
                 >
-                  Електронна пошта *
+                  {labels.emailLabel}
                 </label>
                 <input
                   type="email"
@@ -240,9 +246,9 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   value={form.email}
                   onChange={(e) => {
                     setForm((prev) => ({ ...prev, email: e.target.value }));
-                    if (error) setError(null);
+                    if (errorKey) setErrorKey(null);
                   }}
-                  placeholder="olena@school.ua"
+                  placeholder={labels.emailPlaceholder}
                   className="w-full px-4 py-2.5 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 disabled:opacity-60"
                 />
               </div>
@@ -254,7 +260,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   htmlFor="join-phone"
                   className="block text-sm font-medium text-harmony-ink mb-1.5"
                 >
-                  Телефон
+                  {labels.phoneLabel}
                 </label>
                 <input
                   type="tel"
@@ -262,7 +268,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   disabled={isSubmitting}
                   value={form.phone}
                   onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
-                  placeholder="+38 (0XX) XXX-XX-XX"
+                  placeholder={labels.phonePlaceholder}
                   className="w-full px-4 py-2.5 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 disabled:opacity-60"
                 />
               </div>
@@ -272,7 +278,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   htmlFor="join-organization"
                   className="block text-sm font-medium text-harmony-ink mb-1.5"
                 >
-                  Школа / Організація
+                  {labels.orgLabel}
                 </label>
                 <input
                   type="text"
@@ -282,7 +288,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                   onChange={(e) =>
                     setForm((prev) => ({ ...prev, organization: e.target.value }))
                   }
-                  placeholder="Назва школи або громади"
+                  placeholder={labels.orgPlaceholder}
                   className="w-full px-4 py-2.5 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 disabled:opacity-60"
                 />
               </div>
@@ -293,7 +299,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                 htmlFor="join-message"
                 className="block text-sm font-medium text-harmony-ink mb-1.5"
               >
-                Повідомлення *
+                {labels.messageLabel}
               </label>
               <textarea
                 id="join-message"
@@ -303,20 +309,20 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                 value={form.message}
                 onChange={(e) => {
                   setForm((prev) => ({ ...prev, message: e.target.value }));
-                  if (error) setError(null);
+                  if (errorKey) setErrorKey(null);
                 }}
-                placeholder="Розкажіть коротко про вашу школу або як ви бажаєте долучитися..."
+                placeholder={labels.messagePlaceholder}
                 className="w-full px-4 py-2.5 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 resize-y disabled:opacity-60"
               />
             </div>
 
-            {error && (
+            {errorKey && (
               <div
                 role="alert"
                 className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm"
               >
                 <AlertCircle className="w-4 h-4 shrink-0 text-red-600" aria-hidden="true" />
-                <span>{error}</span>
+                <span>{errors[errorKey]}</span>
               </div>
             )}
 
@@ -328,12 +334,15 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                  Надсилання...
+                  {labels.submitLoading}
                 </>
               ) : (
                 <>
-                  Надіслати заявку
-                  <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+                  {labels.submitIdle}
+                  <Send
+                    className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
                 </>
               )}
             </button>

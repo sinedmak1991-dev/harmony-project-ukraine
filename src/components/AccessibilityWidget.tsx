@@ -7,6 +7,7 @@ import {
   Type,
   X,
 } from 'lucide-react';
+import type { SiteContent } from '../data/harmonyContent';
 
 type FontScale = 'normal' | 'large' | 'xlarge';
 
@@ -18,6 +19,10 @@ interface AccessibilitySettings {
   reduceMotion: boolean;
 }
 
+interface AccessibilityWidgetProps {
+  labels: SiteContent['accessibility'];
+}
+
 const STORAGE_KEY = 'harmony-a11y-settings-v1';
 
 const DEFAULT_SETTINGS: AccessibilitySettings = {
@@ -27,12 +32,6 @@ const DEFAULT_SETTINGS: AccessibilitySettings = {
   highlightLinks: false,
   reduceMotion: false,
 };
-
-const FONT_SCALE_OPTIONS: { value: FontScale; label: string; short: string }[] = [
-  { value: 'normal', label: 'Звичайний (100%)', short: '100%' },
-  { value: 'large', label: 'Збільшений (115%)', short: '115%' },
-  { value: 'xlarge', label: 'Великий (130%)', short: '130%' },
-];
 
 function loadSavedSettings(): AccessibilitySettings {
   try {
@@ -95,7 +94,7 @@ function AccessibilityIcon({ className = 'w-6 h-6' }: { className?: string }) {
   );
 }
 
-export function AccessibilityWidget() {
+export function AccessibilityWidget({ labels }: AccessibilityWidgetProps) {
   const [settings, setSettings] = useState<AccessibilitySettings>(() =>
     loadSavedSettings()
   );
@@ -113,17 +112,15 @@ export function AccessibilityWidget() {
     settings.highlightLinks ||
     settings.reduceMotion;
 
-  // Застосування налаштувань до <html> та збереження у localStorage
   useEffect(() => {
     applySettingsToDocument(settings);
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     } catch {
-      // Ігноруємо помилку сховища у середовищах з обмеженнями cookie/storage
+      // Ігноруємо помилку сховища у середовищах з обмеженнями
     }
   }, [settings]);
 
-  // Закриття панелі клавішею Escape або кліком зовні + керування фокусом
   useEffect(() => {
     if (!isOpen) return;
 
@@ -158,7 +155,7 @@ export function AccessibilityWidget() {
 
   const handleReset = () => {
     setSettings(DEFAULT_SETTINGS);
-    setAnnouncement('Налаштування доступності скинуто до стандартних.');
+    setAnnouncement(labels.announcements.reset);
   };
 
   const toggleSetting = (
@@ -167,10 +164,25 @@ export function AccessibilityWidget() {
   ) => {
     setSettings((prev) => {
       const nextValue = !prev[key];
-      setAnnouncement(`${label}: ${nextValue ? 'увімкнено' : 'вимкнено'}.`);
+      setAnnouncement(
+        `${label}: ${
+          nextValue ? labels.announcements.enabled : labels.announcements.disabled
+        }.`
+      );
       return { ...prev, [key]: nextValue };
     });
   };
+
+  const fontScaleOptions: {
+    value: FontScale;
+    shortTitle: string;
+    ariaLabel: string;
+    percent: string;
+  }[] = [
+    { value: 'normal', ...labels.fontScales.normal },
+    { value: 'large', ...labels.fontScales.large },
+    { value: 'xlarge', ...labels.fontScales.xlarge },
+  ];
 
   const toggleRows: {
     key: 'highContrast' | 'readableFont' | 'highlightLinks' | 'reduceMotion';
@@ -180,26 +192,22 @@ export function AccessibilityWidget() {
   }[] = [
     {
       key: 'highContrast',
-      label: 'Високий контраст',
-      description: 'Чіткіший текст, насичені межі та контрастний фон',
+      ...labels.toggles.highContrast,
       icon: Contrast,
     },
     {
       key: 'readableFont',
-      label: 'Зручне читання',
-      description: 'Більші інтервали тексту та вирівнювання по лівому краю',
+      ...labels.toggles.readableFont,
       icon: Type,
     },
     {
       key: 'highlightLinks',
-      label: 'Підсвітити посилання й кнопки',
-      description: 'Додає помітний контур усім інтерактивним елементам',
+      ...labels.toggles.highlightLinks,
       icon: Link2,
     },
     {
       key: 'reduceMotion',
-      label: 'Зупинити анімації',
-      description: 'Вимикає рух елементів і плавні переходи',
+      ...labels.toggles.reduceMotion,
       icon: PauseCircle,
     },
   ];
@@ -230,10 +238,10 @@ export function AccessibilityWidget() {
                   id="a11y-panel-title"
                   className="font-ui text-[15px] font-bold leading-tight truncate"
                 >
-                  Налаштування доступності
+                  {labels.panelTitle}
                 </h2>
                 <p className="text-[11px] text-emerald-100/85 mt-0.5">
-                  Безбар’єрний режим сайту
+                  {labels.panelSubtitle}
                 </p>
               </div>
             </div>
@@ -245,7 +253,7 @@ export function AccessibilityWidget() {
                 setIsOpen(false);
                 triggerRef.current?.focus();
               }}
-              aria-label="Закрити панель налаштувань доступності"
+              aria-label={labels.closeAria}
               className="w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200"
             >
               <X className="w-4 h-4" aria-hidden="true" />
@@ -261,12 +269,12 @@ export function AccessibilityWidget() {
                   id="a11y-font-scale-label"
                   className="font-ui text-xs font-bold uppercase tracking-wider text-[#184E48]"
                 >
-                  Розмір шрифту
+                  {labels.fontScaleLabel}
                 </span>
                 <span className="font-ui text-xs font-semibold text-[#22A06B]">
                   {
-                    FONT_SCALE_OPTIONS.find((opt) => opt.value === settings.fontScale)
-                      ?.short
+                    fontScaleOptions.find((opt) => opt.value === settings.fontScale)
+                      ?.percent
                   }
                 </span>
               </div>
@@ -276,7 +284,7 @@ export function AccessibilityWidget() {
                 aria-labelledby="a11y-font-scale-label"
                 className="grid grid-cols-3 gap-1.5"
               >
-                {FONT_SCALE_OPTIONS.map((option) => {
+                {fontScaleOptions.map((option) => {
                   const selected = settings.fontScale === option.value;
                   return (
                     <button
@@ -284,10 +292,12 @@ export function AccessibilityWidget() {
                       type="button"
                       role="radio"
                       aria-checked={selected}
-                      aria-label={option.label}
+                      aria-label={option.ariaLabel}
                       onClick={() => {
                         setSettings((prev) => ({ ...prev, fontScale: option.value }));
-                        setAnnouncement(`Розмір шрифту: ${option.label}.`);
+                        setAnnouncement(
+                          `${labels.announcements.fontScalePrefix}: ${option.ariaLabel}.`
+                        );
                       }}
                       className={`font-ui px-2 py-2 rounded-xl text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-[#22A06B] ${
                         selected
@@ -295,19 +305,13 @@ export function AccessibilityWidget() {
                           : 'bg-white border border-emerald-900/12 text-[#184E48] hover:bg-[#EAF4EE]'
                       }`}
                     >
-                      <span className="block leading-tight">
-                        {option.value === 'normal'
-                          ? 'Звичайний'
-                          : option.value === 'large'
-                            ? 'Збільшений'
-                            : 'Великий'}
-                      </span>
+                      <span className="block leading-tight">{option.shortTitle}</span>
                       <span
                         className={`block text-[11px] mt-0.5 ${
                           selected ? 'text-emerald-50' : 'text-harmony-ink/75'
                         }`}
                       >
-                        {option.short}
+                        {option.percent}
                       </span>
                     </button>
                   );
@@ -379,7 +383,7 @@ export function AccessibilityWidget() {
               className="w-full font-ui inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-[#184E48]/20 bg-[#F7FBF9] hover:bg-[#EAF4EE] text-[#184E48] text-xs font-semibold transition-colors disabled:opacity-45 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-[#22A06B]"
             >
               <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Скинути налаштування</span>
+              <span>{labels.resetButton}</span>
             </button>
           </div>
         </div>
@@ -391,7 +395,7 @@ export function AccessibilityWidget() {
           aria-hidden="true"
           className="pointer-events-none absolute right-full mr-3 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-[#184E48] text-white font-ui text-xs font-semibold px-3.5 py-2 shadow-md opacity-0 translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 group-focus-within:opacity-100 group-focus-within:translate-x-0 transition-all duration-200"
         >
-          Налаштування доступності
+          {labels.buttonLabel}
         </span>
 
         <button
@@ -400,8 +404,8 @@ export function AccessibilityWidget() {
           onClick={() => setIsOpen((prev) => !prev)}
           aria-expanded={isOpen}
           aria-controls="accessibility-panel"
-          aria-label="Налаштування доступності"
-          title="Налаштування доступності"
+          aria-label={labels.buttonLabel}
+          title={labels.buttonLabel}
           className="relative w-13 h-13 sm:w-14 sm:h-14 rounded-full bg-[#184E48] hover:bg-[#22A06B] text-white shadow-lg flex items-center justify-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#22A06B] focus-visible:ring-offset-2"
         >
           <AccessibilityIcon className="w-7 h-7" />

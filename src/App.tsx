@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle,
   ArrowRight,
@@ -37,30 +37,34 @@ import { MediaFrame } from './components/MediaFrame';
 import { NewsModal } from './components/NewsModal';
 import { Reveal } from './components/Reveal';
 import {
-  HARMONY_PRINCIPLES,
   type HarmonyPrincipleItem,
-  IMPACT_METRICS,
+  type Language,
   MEDIA_ASSETS,
-  NAV_ITEMS,
   type NewsArticle,
   type NewsCategory,
-  PILLARS,
-  SCHOOL_FEATURES,
-  SCHOOL_STEPS,
-  WELLBEING_BENEFITS,
+  SITE_CONTENT,
 } from './data/harmonyContent';
-import { fetchNewsFromSheet, submitContactToSheet } from './services/googleSheetsApi';
+import {
+  fetchNewsFromSheet,
+  localizeNewsArticle,
+  submitContactToSheet,
+} from './services/googleSheetsApi';
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const TOPIC_LABELS: Record<string, string> = {
-  school: 'Долучити школу до проєкту',
-  training: 'Навчання для вчителів',
-  partnership: 'Партнерство / Підтримка',
-  other: 'Інше питання',
-};
-
+const LANG_STORAGE_KEY = 'harmony_lang';
 const STAGGER_DELAYS = [100, 200, 300, 400, 500] as const;
+
+function loadSavedLanguage(): Language {
+  try {
+    const saved = window.localStorage.getItem(LANG_STORAGE_KEY);
+    if (saved === 'en' || saved === 'uk') {
+      return saved;
+    }
+  } catch {
+    // Ігноруємо помилку сховища у середовищах з обмеженнями
+  }
+  return 'uk';
+}
 
 function getStaggerDelay(index: number): 0 | 100 | 200 | 300 | 400 | 500 {
   return STAGGER_DELAYS[Math.min(index, STAGGER_DELAYS.length - 1)];
@@ -139,16 +143,31 @@ function renderHarmonyPrincipleIcon(name: HarmonyPrincipleItem['iconName']) {
   }
 }
 
+type ContactTopicKey = 'school' | 'training' | 'partnership' | 'other';
+type ContactErrorKey = 'name' | 'email' | 'message' | 'network';
+
 export default function App() {
+  const [lang, setLang] = useState<Language>(() => loadSavedLanguage());
+  const content = SITE_CONTENT[lang];
+
   const [activeSection, setActiveSection] = useState<string>('');
   const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
   const [isLoadingNews, setIsLoadingNews] = useState<boolean>(true);
-  const [selectedNews, setSelectedNews] = useState<NewsArticle | null>(null);
-  const [activeCategory, setActiveCategory] = useState<NewsCategory>('Усі');
+  const [selectedNewsId, setSelectedNewsId] = useState<string | number | null>(null);
+  const [activeCategory, setActiveCategory] = useState<NewsCategory>(
+    SITE_CONTENT[loadSavedLanguage()].newsSection.allCategory
+  );
   const [isJoinModalOpen, setIsJoinModalOpen] = useState<boolean>(false);
 
   // Стан форми зворотного зв'язку
-  const [contactForm, setContactForm] = useState({
+  const [contactForm, setContactForm] = useState<{
+    name: string;
+    email: string;
+    phone: string;
+    organization: string;
+    topic: ContactTopicKey;
+    message: string;
+  }>({
     name: '',
     email: '',
     phone: '',
@@ -157,8 +176,24 @@ export default function App() {
     message: '',
   });
   const [isContactSubmitting, setIsContactSubmitting] = useState(false);
-  const [contactError, setContactError] = useState<string | null>(null);
+  const [contactErrorKey, setContactErrorKey] = useState<ContactErrorKey | null>(null);
   const [contactSubmitted, setContactSubmitted] = useState(false);
+
+  // Збереження мови в localStorage + оновлення <html lang> та <title>
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    document.title = SITE_CONTENT[lang].pageTitle;
+    try {
+      window.localStorage.setItem(LANG_STORAGE_KEY, lang);
+    } catch {
+      // Ігноруємо помилку сховища у середовищах з обмеженнями
+    }
+  }, [lang]);
+
+  const handleChangeLang = (nextLang: Language) => {
+    setLang(nextLang);
+    setActiveCategory(SITE_CONTENT[nextLang].newsSection.allCategory);
+  };
 
   // Динамічне завантаження новин виключно з Google Таблиці
   useEffect(() => {
@@ -187,7 +222,7 @@ export default function App() {
 
   // Відстеження активної секції при скролі
   useEffect(() => {
-    const sectionIds = NAV_ITEMS.map((item) => item.id);
+    const sectionIds = SITE_CONTENT.uk.navItems.map((item) => item.id);
     const elements = sectionIds
       .map((id) => document.getElementById(id))
       .filter((el): el is HTMLElement => el !== null);
@@ -213,21 +248,40 @@ export default function App() {
     return () => observer.disconnect();
   }, []);
 
-  const newsCategories: NewsCategory[] = [
-    'Усі',
-    ...Array.from(
-      new Set(newsArticles.map((article) => article.category).filter(Boolean))
-    ),
-  ];
+  // Локалізований масив новин для поточної мови (плавний fallback на український оригінал)
+  const localizedNews = useMemo(
+    () => newsArticles.map((article) => localizeNewsArticle(article, lang)),
+    [newsArticles, lang]
+  );
+
+  const selectedNews = useMemo(
+    () =>
+      selectedNewsId !== null
+        ? localizedNews.find((article) => article.id === selectedNewsId) ?? null
+        : null,
+    [localizedNews, selectedNewsId]
+  );
+
+  const allCategoryLabel = content.newsSection.allCategory;
+
+  const newsCategories: NewsCategory[] = useMemo(
+    () => [
+      allCategoryLabel,
+      ...Array.from(
+        new Set(localizedNews.map((article) => article.category).filter(Boolean))
+      ),
+    ],
+    [allCategoryLabel, localizedNews]
+  );
 
   const effectiveCategory = newsCategories.includes(activeCategory)
     ? activeCategory
-    : 'Усі';
+    : allCategoryLabel;
 
   const filteredNews =
-    effectiveCategory === 'Усі'
-      ? newsArticles
-      : newsArticles.filter((article) => article.category === effectiveCategory);
+    effectiveCategory === allCategoryLabel
+      ? localizedNews
+      : localizedNews.filter((article) => article.category === effectiveCategory);
 
   const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -238,19 +292,19 @@ export default function App() {
     const trimmedMessage = contactForm.message.trim();
 
     if (trimmedName.length < 2) {
-      setContactError('Будь ласка, вкажіть ваше ім’я та прізвище.');
+      setContactErrorKey('name');
       return;
     }
     if (!EMAIL_PATTERN.test(trimmedEmail)) {
-      setContactError('Будь ласка, введіть коректну електронну адресу.');
+      setContactErrorKey('email');
       return;
     }
     if (trimmedMessage.length < 6) {
-      setContactError('Будь ласка, напишіть коротке повідомлення (щонайменше 6 символів).');
+      setContactErrorKey('message');
       return;
     }
 
-    setContactError(null);
+    setContactErrorKey(null);
     setIsContactSubmitting(true);
 
     try {
@@ -259,7 +313,7 @@ export default function App() {
         email: trimmedEmail,
         phone: contactForm.phone,
         organization: contactForm.organization,
-        topic: TOPIC_LABELS[contactForm.topic] || contactForm.topic,
+        topic: content.contactsSection.fields.topics[contactForm.topic],
         message: trimmedMessage,
       });
 
@@ -273,9 +327,7 @@ export default function App() {
         message: '',
       });
     } catch {
-      setContactError(
-        'Не вдалося надіслати звернення. Перевірте з’єднання з інтернетом і спробуйте ще раз.'
-      );
+      setContactErrorKey('network');
     } finally {
       setIsContactSubmitting(false);
     }
@@ -288,34 +340,36 @@ export default function App() {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:inline-flex focus:items-center focus:gap-2 focus:px-5 focus:py-3 focus:rounded-full focus:bg-[#184E48] focus:text-white focus:font-ui focus:text-sm focus:font-semibold focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#22A06B] focus:ring-offset-2"
       >
-        Перейти до основного вмісту
+        {content.skipToContent}
       </a>
 
       {/* НАВІГАЦІЯ */}
       <Header
         activeSection={activeSection}
+        lang={lang}
+        onChangeLang={handleChangeLang}
+        content={content}
         onOpenJoinModal={() => setIsJoinModalOpen(true)}
       />
 
       <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* 1. HERO СЕКЦІЯ (Освіта в гармонії з життям + макрофото пухнастої кульбаби праворуч) */}
         <section className="relative overflow-hidden bg-[#F7FBF9] border-b border-emerald-900/10">
-          {/* HERO IMAGE: Кульбаба (можна замінити на власне фото images/dandelion-hero.jpg) */}
           <div
             aria-hidden="true"
             className="hidden lg:block absolute inset-y-0 right-0 w-[64%] xl:w-[62%] overflow-hidden pointer-events-none select-none"
           >
             <MediaFrame
               src={MEDIA_ASSETS.heroDandelion}
-              alt="Стигла пухнаста кульбаба у ранковому світлі з насінинами, що розлітаються у повітрі"
+              alt={content.hero.imageAlt}
               placeholderPath="images/dandelion-hero.jpg"
               priority
-              className="w-full h-full bg-[#F7FBF9]"
+              className="w-full h-full"
               imgClassName="object-right dandelion-breeze"
             />
-            {/* М'яка градієнтна маска для безшовного злиття кульбаби зі світлим фоном #F7FBF9 */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#F7FBF9] via-[#F7FBF9]/80 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#F7FBF9]/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#F7FBF9] via-[#F7FBF9]/80 via-[34%] to-transparent" />
+            <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-[#F7FBF9]/70 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#F7FBF9]/75 to-transparent" />
           </div>
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10 sm:pt-16 sm:pb-16 lg:py-24 xl:py-28">
@@ -323,12 +377,12 @@ export default function App() {
               {/* Ліва текстова частина поверх світлої зони банера */}
               <div className="hero-enter lg:col-span-6 xl:col-span-6 space-y-6">
                 <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.5rem] font-semibold text-harmony-heading leading-[1.12] tracking-tight">
-                  Освіта, що оживає{' '}
-                  <span className="text-harmony-primary">в гармонії з життям.</span>
+                  {content.hero.titleStart}{' '}
+                  <span className="text-harmony-primary">{content.hero.titleHighlight}</span>
                 </h1>
 
                 <p className="text-base sm:text-[17px] text-harmony-ink max-w-xl leading-relaxed text-justify hyphens-auto">
-                  Навчання, засноване на принципах природи: від запитів і досліджень до значущих «Великих робіт». Підтримуємо добробут українських учнів і педагогів, формуючи покоління відповідальних лідерів сталого майбутнього.
+                  {content.hero.description}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3.5 pt-2">
@@ -336,33 +390,41 @@ export default function App() {
                     href="#approach"
                     className="group font-ui inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm sm:text-base font-semibold tracking-tight px-6 py-3.5 rounded-full shadow-xs transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
                   >
-                    Відкрити підхід
-                    <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+                    {content.hero.primaryCta}
+                    <ChevronRight
+                      className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                      aria-hidden="true"
+                    />
                   </a>
                   <a
                     href="#schools"
                     className="font-ui inline-flex items-center justify-center bg-white/95 hover:bg-harmony-sand text-harmony-heading border border-emerald-900/15 text-sm sm:text-base font-semibold tracking-tight px-6 py-3.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 whitespace-nowrap backdrop-blur-xs"
                   >
-                    Впровадити у школі
+                    {content.hero.secondaryCta}
                   </a>
                 </div>
 
-                {/* Слоган під кнопками (як на початковому макеті) */}
+                {/* Слоган під кнопками */}
                 <div className="pt-5 border-t border-emerald-900/10 flex items-center gap-2.5 text-xs sm:text-sm text-harmony-ink max-w-lg">
-                  <Sprout className="w-4 h-4 text-harmony-primary shrink-0" strokeWidth={2} aria-hidden="true" />
+                  <Sprout
+                    className="w-4 h-4 text-harmony-primary shrink-0"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
                   <span>
-                    <strong className="font-semibold text-harmony-heading">Природа — наш учитель.</strong>{' '}
-                    Вкорінені у цінностях, відкриті до світу.
+                    <strong className="font-semibold text-harmony-heading">
+                      {content.hero.sloganBold}
+                    </strong>{' '}
+                    {content.hero.sloganRest}
                   </span>
                 </div>
               </div>
 
-              {/* Мобільна та планшетна версія фото кульбаби з плавним переходом зверху */}
+              {/* Мобільна та планшетна версія фото кульбаби */}
               <div className="hero-enter-delayed lg:hidden relative rounded-3xl overflow-hidden border border-emerald-900/10 aspect-[16/10] bg-[#F7FBF9]">
-                {/* HERO IMAGE: Кульбаба (можна замінити на власне фото images/dandelion-hero.jpg) */}
                 <MediaFrame
                   src={MEDIA_ASSETS.heroDandelion}
-                  alt="Стигла пухнаста кульбаба у ранковому світлі з насінинами, що розлітаються у повітрі"
+                  alt={content.hero.imageAlt}
                   placeholderPath="images/dandelion-hero.jpg"
                   priority
                   className="w-full h-full"
@@ -386,19 +448,22 @@ export default function App() {
             <Reveal className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-10 lg:mb-12">
               <div className="max-w-2xl">
                 <p className="text-xs sm:text-sm font-medium text-[#22A06B] mb-2">
-                  Наш підхід у чотирьох елементах
+                  {content.pillarsSection.eyebrow}
                 </p>
                 <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-heading leading-tight">
-                  Чотири опори підходу <span className="text-harmony-primary">Гармонії</span>
+                  {content.pillarsSection.titleStart}{' '}
+                  <span className="text-harmony-primary">
+                    {content.pillarsSection.titleHighlight}
+                  </span>
                 </h2>
               </div>
               <p className="text-sm sm:text-base text-harmony-ink max-w-md leading-relaxed text-justify hyphens-auto">
-                Цілісна система, де шкільні предмети поєднуються з життєвим досвідом, творчістю та турботою про світ.
+                {content.pillarsSection.description}
               </p>
             </Reveal>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-              {PILLARS.map((pillar, index) => (
+              {content.pillarsSection.items.map((pillar, index) => (
                 <Reveal
                   key={pillar.number}
                   delayMs={getStaggerDelay(index)}
@@ -444,22 +509,25 @@ export default function App() {
                 <article className="group h-full bg-white rounded-3xl overflow-hidden border border-emerald-900/10 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(24,78,72,0.16)] hover:border-harmony-emerald/45">
                   <div className="p-7 sm:p-8 pb-6 flex-1 flex flex-col">
                     <h2 className="font-serif text-2xl sm:text-[1.65rem] font-bold text-harmony-heading leading-snug mb-3.5">
-                      Навчання, що зростає разом із дитиною
+                      {content.impactSection.card1.title}
                     </h2>
                     <p className="text-harmony-ink text-sm sm:text-[15px] leading-relaxed mb-5 text-justify hyphens-auto">
-                      Коли природа стає нашим учителем, навчання оживає. Від раннього дитинства до юності ми розвиваємо допитливість, творчість і вміння бачити цілісність світу розумом, серцем і руками.
+                      {content.impactSection.card1.description}
                     </p>
                     <a
                       href="#schools"
                       className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-[#22A06B] hover:text-[#1A7F56] transition-colors"
                     >
-                      Дізнатися більше
-                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                      {content.impactSection.card1.cta}
+                      <ArrowRight
+                        className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
                     </a>
                   </div>
                   <MediaFrame
                     src={MEDIA_ASSETS.natureDetail}
-                    alt="Українські школярі малюють аквареллю листя та квіти на галявині"
+                    alt={content.impactSection.card1.imageAlt}
                     placeholderPath="images/nature-detail.jpg"
                     className="aspect-[16/11] w-full shrink-0 mt-auto"
                     imgClassName="transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
@@ -472,22 +540,25 @@ export default function App() {
                 <article className="group h-full bg-white rounded-3xl overflow-hidden border border-emerald-900/10 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(24,78,72,0.16)] hover:border-harmony-emerald/45">
                   <div className="p-7 sm:p-8 pb-6 flex-1 flex flex-col">
                     <h2 className="font-serif text-2xl sm:text-[1.65rem] font-bold text-harmony-heading leading-snug mb-3.5">
-                      Підтримуємо дітей України сьогодні
+                      {content.impactSection.card2.title}
                     </h2>
                     <p className="text-harmony-ink text-sm sm:text-[15px] leading-relaxed mb-5 text-justify hyphens-auto">
-                      Допомагаємо школам і громадам зміцнювати психологічний добробут учнів та педагогів. Через турботу про довкілля, спільні проєкти й тихі хвилини споглядання діти відновлюють внутрішню рівновагу та надію.
+                      {content.impactSection.card2.description}
                     </p>
                     <a
                       href="#wellbeing"
                       className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-[#22A06B] hover:text-[#1A7F56] transition-colors"
                     >
-                      Читати більше
-                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                      {content.impactSection.card2.cta}
+                      <ArrowRight
+                        className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
                     </a>
                   </div>
                   <MediaFrame
                     src={MEDIA_ASSETS.wellbeing}
-                    alt="Ранковий український луг із дикими квітами та лелекою у гнізді"
+                    alt={content.impactSection.card2.imageAlt}
                     placeholderPath="images/wellbeing.jpg"
                     className="aspect-[16/11] w-full mt-auto"
                     imgClassName="transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
@@ -507,15 +578,15 @@ export default function App() {
 
                   <div className="relative">
                     <p className="text-xs font-medium text-emerald-200 tracking-wide mb-1.5">
-                      Вимірювані результати
+                      {content.impactSection.statsCard.eyebrow}
                     </p>
                     <h2 className="font-serif text-2xl sm:text-[1.75rem] font-bold tracking-wide mb-8">
-                      Реальний вплив
+                      {content.impactSection.statsCard.title}
                     </h2>
 
                     <div className="space-y-6">
-                      {IMPACT_METRICS.map((metric, idx) => (
-                        <div key={metric.label} className="flex items-center gap-4">
+                      {content.impactSection.statsCard.metrics.map((metric, idx) => (
+                        <div key={metric.iconName} className="flex items-center gap-4">
                           <div
                             className={`w-12 h-12 rounded-full bg-white/12 border border-white/18 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
                               idx === 1 ? 'text-emerald-200' : 'text-harmony-sun'
@@ -545,8 +616,11 @@ export default function App() {
                       href="#news"
                       className="inline-flex items-center gap-2 text-sm font-medium text-emerald-200 hover:text-white transition-colors"
                     >
-                      Історії впливу
-                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                      {content.impactSection.statsCard.cta}
+                      <ArrowRight
+                        className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                        aria-hidden="true"
+                      />
                     </a>
                   </div>
                 </div>
@@ -565,20 +639,23 @@ export default function App() {
             <div>
               <Reveal className="max-w-2xl mb-10">
                 <p className="text-xs sm:text-sm font-medium text-[#22A06B] mb-2">
-                  Для шкіл в Україні
+                  {content.schoolsSection.eyebrow}
                 </p>
                 <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-heading leading-tight">
-                  Як ми працюємо зі <span className="text-harmony-primary">школами</span>
+                  {content.schoolsSection.titleStart}{' '}
+                  <span className="text-harmony-primary">
+                    {content.schoolsSection.titleHighlight}
+                  </span>
                 </h2>
                 <p className="text-harmony-ink mt-3 text-base leading-relaxed text-justify hyphens-auto">
-                  Пропонуємо перевірений і гнучкий шлях інтеграції підходу «Гармонії» в навчальний процес та повсякденну культуру сучасної української школи.
+                  {content.schoolsSection.description}
                 </p>
               </Reveal>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5 items-stretch">
-                {SCHOOL_FEATURES.map((feature, index) => (
+                {content.schoolsSection.features.map((feature, index) => (
                   <Reveal
-                    key={feature.title}
+                    key={feature.iconName}
                     delayMs={getStaggerDelay(index)}
                     className="h-full"
                   >
@@ -603,17 +680,17 @@ export default function App() {
               <Reveal className="bg-white rounded-3xl p-7 sm:p-10 border border-emerald-900/10">
                 <div className="max-w-3xl mb-8">
                   <h3 className="font-serif text-2xl sm:text-3xl font-bold text-harmony-heading leading-tight">
-                    Навчання, що підтримує добробут і стійкість
+                    {content.wellbeingSection.title}
                   </h3>
                   <p className="text-harmony-ink text-sm sm:text-base mt-3 leading-relaxed text-justify hyphens-auto">
-                    Коли діти навчаються у зв’язку з природою, вони почуваються добре і впевнено. Ми створюємо в школі простір довіри, спокою та взаємної підтримки для кожного учня й педагога.
+                    {content.wellbeingSection.description}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5">
-                  {WELLBEING_BENEFITS.map((benefit) => (
+                  {content.wellbeingSection.benefits.map((benefit) => (
                     <div
-                      key={benefit.title}
+                      key={benefit.iconName}
                       className="group flex flex-col items-center text-center p-4 rounded-2xl bg-harmony-cream border border-emerald-900/10 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:shadow-sm hover:border-harmony-emerald/40"
                     >
                       <div className="w-11 h-11 rounded-full bg-[#E6F5EE] text-[#22A06B] flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110">
@@ -627,22 +704,29 @@ export default function App() {
                 </div>
 
                 <div className="mt-6 p-4 sm:p-5 rounded-2xl bg-harmony-sand/85 border border-harmony-emerald/20 flex items-center gap-3.5 text-xs sm:text-sm text-harmony-heading">
-                  <Sprout className="w-5 h-5 text-harmony-primary shrink-0" strokeWidth={1.85} aria-hidden="true" />
+                  <Sprout
+                    className="w-5 h-5 text-harmony-primary shrink-0"
+                    strokeWidth={1.85}
+                    aria-hidden="true"
+                  />
                   <p className="leading-relaxed text-justify hyphens-auto">
-                    <strong className="font-semibold">Психологічний добробут і стійкість</strong> — ключовий пріоритет Проєкту «Гармонія», особливо важливий для українських дітей і педагогів сьогодні.
+                    <strong className="font-semibold">
+                      {content.wellbeingSection.highlightBold}
+                    </strong>{' '}
+                    {content.wellbeingSection.highlightRest}
                   </p>
                 </div>
               </Reveal>
             </div>
 
-            {/* 4.3 Ваш шлях упровадження (каскадна поява 100..500ms) */}
+            {/* 4.3 Ваш шлях упровадження */}
             <div>
               <Reveal className="max-w-2xl mb-10">
                 <h3 className="font-serif text-2xl sm:text-3xl font-bold text-harmony-heading">
-                  Ваш шлях упровадження
+                  {content.stepsSection.title}
                 </h3>
                 <p className="text-harmony-ink text-sm sm:text-base mt-2 leading-relaxed text-justify hyphens-auto">
-                  Простий і підтримуваний маршрут від першого знайомства до живих змін у шкільній спільноті.
+                  {content.stepsSection.description}
                 </p>
               </Reveal>
 
@@ -652,12 +736,12 @@ export default function App() {
                   className="hidden lg:block absolute top-5 left-[10%] right-[10%] border-t border-dashed border-harmony-emerald/55"
                 />
 
-                {SCHOOL_STEPS.map((item, index) => (
+                {content.stepsSection.steps.map((item, index) => (
                   <Reveal
                     key={item.step}
                     delayMs={getStaggerDelay(index)}
                     className={
-                      index === SCHOOL_STEPS.length - 1
+                      index === content.stepsSection.steps.length - 1
                         ? 'sm:col-span-2 lg:col-span-1 h-full'
                         : 'h-full'
                     }
@@ -690,13 +774,13 @@ export default function App() {
 
                 <div className="relative max-w-2xl space-y-3">
                   <p className="text-xs font-medium text-harmony-sun tracking-wide">
-                    Відкриті до партнерства
+                    {content.ctaBanner.eyebrow}
                   </p>
                   <h3 className="font-serif text-2xl sm:text-3xl font-bold tracking-wide text-white">
-                    Готові розпочати?
+                    {content.ctaBanner.title}
                   </h3>
                   <p className="text-sm sm:text-base text-emerald-50/90 leading-relaxed text-justify hyphens-auto">
-                    Будуймо разом освіту 21 століття, яка підтримує дітей України — силою природи, цінностей та живої спільноти.
+                    {content.ctaBanner.description}
                   </p>
                 </div>
 
@@ -705,8 +789,11 @@ export default function App() {
                   onClick={() => setIsJoinModalOpen(true)}
                   className="relative shrink-0 inline-flex items-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white font-semibold text-sm sm:text-base px-7 py-3.5 rounded-full shadow-xs transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
                 >
-                  Долучитися
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                  {content.ctaBanner.button}
+                  <ArrowRight
+                    className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                    aria-hidden="true"
+                  />
                 </button>
               </div>
             </Reveal>
@@ -719,21 +806,21 @@ export default function App() {
             <Reveal className="flex flex-col lg:flex-row lg:items-end justify-between mb-10 lg:mb-12 gap-6">
               <div className="max-w-xl">
                 <p className="text-xs sm:text-sm font-medium text-[#22A06B] mb-2">
-                  Події та публікації
+                  {content.newsSection.eyebrow}
                 </p>
                 <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-heading leading-tight">
-                  Новини проєкту
+                  {content.newsSection.title}
                 </h2>
                 <p className="text-sm sm:text-base text-harmony-ink mt-3 leading-relaxed text-justify hyphens-auto">
-                  Актуальні події, анонси семінарів для педагогів та новини розвитку Проєкту «Гармонія» в Україні.
+                  {content.newsSection.description}
                 </p>
               </div>
 
               {/* Інтерактивний фільтр категорій новин (показується лише за наявності новин) */}
-              {!isLoadingNews && newsArticles.length > 0 && (
+              {!isLoadingNews && localizedNews.length > 0 && (
                 <div
                   role="tablist"
-                  aria-label="Фільтр новин за категорією"
+                  aria-label={content.newsSection.filterAriaLabel}
                   className="inline-flex flex-wrap items-center gap-1 p-1 bg-harmony-sand rounded-xl border border-emerald-900/10 self-start lg:self-end"
                 >
                   {newsCategories.map((category) => {
@@ -762,8 +849,11 @@ export default function App() {
             {isLoadingNews ? (
               <div role="status" aria-live="polite" className="space-y-6">
                 <div className="inline-flex items-center gap-2.5 text-sm font-medium text-harmony-heading bg-harmony-sand/80 border border-emerald-900/10 px-4 py-2 rounded-full">
-                  <Loader2 className="w-4 h-4 text-harmony-primary animate-spin" aria-hidden="true" />
-                  <span>Завантаження новин...</span>
+                  <Loader2
+                    className="w-4 h-4 text-harmony-primary animate-spin"
+                    aria-hidden="true"
+                  />
+                  <span>{content.newsSection.loadingText}</span>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-7 lg:gap-8">
@@ -787,17 +877,17 @@ export default function App() {
                   ))}
                 </div>
               </div>
-            ) : newsArticles.length === 0 ? (
+            ) : localizedNews.length === 0 ? (
               <Reveal>
                 <div className="max-w-2xl mx-auto rounded-3xl bg-harmony-sand border border-emerald-900/10 px-7 sm:px-10 py-10 sm:py-12 text-center shadow-[0_10px_30px_-24px_rgba(24,78,72,0.14)]">
                   <div className="w-12 h-12 rounded-2xl bg-white border border-emerald-900/10 text-harmony-primary flex items-center justify-center mx-auto mb-5">
                     <Sparkles className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
                   </div>
                   <h3 className="font-serif text-2xl font-bold text-harmony-heading mb-2.5">
-                    Актуальні новини скоро з'являться
+                    {content.newsSection.emptyTitle}
                   </h3>
                   <p className="text-sm sm:text-base text-harmony-ink leading-relaxed max-w-lg mx-auto">
-                    Ми готуємо свіжі матеріали, анонси подій та історії українських шкіл-партнерів.
+                    {content.newsSection.emptyDescription}
                   </p>
                 </div>
               </Reveal>
@@ -805,7 +895,7 @@ export default function App() {
               <div className="grid md:grid-cols-3 gap-7 lg:gap-8 items-stretch">
                 {filteredNews.map((article, index) => (
                   <Reveal
-                    key={`${effectiveCategory}-${article.id}`}
+                    key={`${lang}-${effectiveCategory}-${article.id}`}
                     delayMs={getStaggerDelay(index)}
                     className="h-full"
                   >
@@ -813,9 +903,9 @@ export default function App() {
                       {article.image && (
                         <button
                           type="button"
-                          onClick={() => setSelectedNews(article)}
+                          onClick={() => setSelectedNewsId(article.id)}
                           className="block w-full text-left focus-visible:outline-none shrink-0"
-                          aria-label={`Відкрити новину: ${article.title}`}
+                          aria-label={`${content.newsSection.openArticleAriaPrefix} ${article.title}`}
                         >
                           <MediaFrame
                             src={article.image}
@@ -850,7 +940,7 @@ export default function App() {
                           <h3 className="font-serif text-xl font-bold text-harmony-heading leading-snug mb-3 group-hover:text-harmony-primary transition-colors">
                             <button
                               type="button"
-                              onClick={() => setSelectedNews(article)}
+                              onClick={() => setSelectedNewsId(article.id)}
                               className="text-left focus-visible:underline"
                             >
                               {article.title}
@@ -865,11 +955,14 @@ export default function App() {
                         <div className="pt-5 mt-5 border-t border-emerald-900/10">
                           <button
                             type="button"
-                            onClick={() => setSelectedNews(article)}
+                            onClick={() => setSelectedNewsId(article.id)}
                             className="inline-flex items-center gap-1.5 text-sm font-semibold text-harmony-primary hover:text-harmony-primary-hover transition-colors"
                           >
-                            Читати далі
-                            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                            {content.newsSection.readMore}
+                            <ArrowRight
+                              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                              aria-hidden="true"
+                            />
                           </button>
                         </div>
                       </div>
@@ -892,15 +985,18 @@ export default function App() {
               <Reveal delayMs={100} className="lg:col-span-5 space-y-6">
                 <div>
                   <p className="text-xs sm:text-sm font-medium text-[#22A06B] mb-2">
-                    Зв’яжіться з нами
+                    {content.contactsSection.eyebrow}
                   </p>
                   <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-heading leading-tight">
-                    Приєднайтеся до <span className="text-harmony-primary">нашого руху</span>
+                    {content.contactsSection.titleStart}{' '}
+                    <span className="text-harmony-primary">
+                      {content.contactsSection.titleHighlight}
+                    </span>
                   </h2>
                 </div>
 
                 <p className="text-harmony-ink leading-relaxed text-base text-justify hyphens-auto">
-                  Освіта може бути силою добра у світі. Разом ми робимо це можливим. Напишіть нам, якщо ви представляєте школу, громаду або бажаєте підтримати проєкт.
+                  {content.contactsSection.description}
                 </p>
 
                 <div className="space-y-4 pt-2">
@@ -909,7 +1005,9 @@ export default function App() {
                       <Mail className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                     </div>
                     <div>
-                      <p className="text-xs text-harmony-ink/70">Електронна пошта</p>
+                      <p className="text-xs text-harmony-ink/70">
+                        {content.contactsSection.emailLabel}
+                      </p>
                       <a
                         href="mailto:info@harmonyproject.org.ua"
                         className="font-medium text-harmony-heading hover:text-harmony-primary transition-colors"
@@ -924,7 +1022,9 @@ export default function App() {
                       <Phone className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                     </div>
                     <div>
-                      <p className="text-xs text-harmony-ink/70">Телефон координатора</p>
+                      <p className="text-xs text-harmony-ink/70">
+                        {content.contactsSection.phoneLabel}
+                      </p>
                       <a
                         href="tel:+380000000000"
                         className="font-medium text-harmony-heading hover:text-harmony-primary transition-colors tabular-nums"
@@ -939,9 +1039,11 @@ export default function App() {
                       <MapPin className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                     </div>
                     <div>
-                      <p className="text-xs text-harmony-ink/70">Локація</p>
+                      <p className="text-xs text-harmony-ink/70">
+                        {content.contactsSection.locationLabel}
+                      </p>
                       <p className="font-medium text-harmony-heading">
-                        Україна / Велика Британія (міжнародна освітня ініціатива)
+                        {content.contactsSection.locationValue}
                       </p>
                     </div>
                   </div>
@@ -952,10 +1054,10 @@ export default function App() {
               <Reveal delayMs={200} className="lg:col-span-7">
                 <div className="bg-white rounded-3xl p-7 sm:p-10 border border-emerald-900/10 shadow-[0_12px_34px_-24px_rgba(24,78,72,0.16)]">
                   <h3 className="font-serif text-2xl font-bold text-harmony-heading mb-2">
-                    Форма зворотного зв’язку
+                    {content.contactsSection.formTitle}
                   </h3>
                   <p className="text-sm text-harmony-ink/70 mb-6">
-                    Поля, позначені зірочкою (*), обов’язкові для заповнення.
+                    {content.contactsSection.formRequiredNote}
                   </p>
 
                   {contactSubmitted ? (
@@ -964,13 +1066,16 @@ export default function App() {
                       className="p-6 rounded-2xl bg-harmony-sand border border-harmony-emerald/30 space-y-4"
                     >
                       <div className="flex items-start gap-3 text-harmony-heading">
-                        <CheckCircle2 className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5" aria-hidden="true" />
+                        <CheckCircle2
+                          className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        />
                         <div>
                           <p className="font-serif font-bold text-lg text-harmony-heading">
-                            Дякуємо! Ваше звернення успішно надіслано.
+                            {content.contactsSection.successTitle}
                           </p>
                           <p className="text-sm text-harmony-ink mt-1 leading-relaxed">
-                            Ми зв’яжемося з вами найближчим часом.
+                            {content.contactsSection.successDescription}
                           </p>
                         </div>
                       </div>
@@ -979,7 +1084,7 @@ export default function App() {
                         onClick={() => setContactSubmitted(false)}
                         className="inline-flex items-center gap-2 text-sm font-semibold text-harmony-primary hover:text-harmony-primary-hover transition-colors"
                       >
-                        Надіслати ще одне повідомлення
+                        {content.contactsSection.sendAnother}
                       </button>
                     </div>
                   ) : (
@@ -990,7 +1095,7 @@ export default function App() {
                             htmlFor="contact-name"
                             className="block text-sm font-medium text-harmony-ink mb-1.5"
                           >
-                            Ваше ім’я та прізвище *
+                            {content.contactsSection.fields.nameLabel}
                           </label>
                           <input
                             type="text"
@@ -1000,9 +1105,9 @@ export default function App() {
                             value={contactForm.name}
                             onChange={(e) => {
                               setContactForm((prev) => ({ ...prev, name: e.target.value }));
-                              if (contactError) setContactError(null);
+                              if (contactErrorKey) setContactErrorKey(null);
                             }}
-                            placeholder="Олена Коваленко"
+                            placeholder={content.contactsSection.fields.namePlaceholder}
                             className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 disabled:opacity-60"
                           />
                         </div>
@@ -1012,7 +1117,7 @@ export default function App() {
                             htmlFor="contact-email"
                             className="block text-sm font-medium text-harmony-ink mb-1.5"
                           >
-                            Електронна пошта *
+                            {content.contactsSection.fields.emailLabel}
                           </label>
                           <input
                             type="email"
@@ -1022,9 +1127,9 @@ export default function App() {
                             value={contactForm.email}
                             onChange={(e) => {
                               setContactForm((prev) => ({ ...prev, email: e.target.value }));
-                              if (contactError) setContactError(null);
+                              if (contactErrorKey) setContactErrorKey(null);
                             }}
-                            placeholder="olena@school.ua"
+                            placeholder={content.contactsSection.fields.emailPlaceholder}
                             className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 disabled:opacity-60"
                           />
                         </div>
@@ -1036,7 +1141,7 @@ export default function App() {
                             htmlFor="contact-phone"
                             className="block text-sm font-medium text-harmony-ink mb-1.5"
                           >
-                            Телефон
+                            {content.contactsSection.fields.phoneLabel}
                           </label>
                           <input
                             type="tel"
@@ -1049,7 +1154,7 @@ export default function App() {
                                 phone: e.target.value,
                               }))
                             }
-                            placeholder="+38 (0XX) XXX-XX-XX"
+                            placeholder={content.contactsSection.fields.phonePlaceholder}
                             className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 disabled:opacity-60"
                           />
                         </div>
@@ -1059,7 +1164,7 @@ export default function App() {
                             htmlFor="contact-organization"
                             className="block text-sm font-medium text-harmony-ink mb-1.5"
                           >
-                            Заклад освіти / Організація
+                            {content.contactsSection.fields.orgLabel}
                           </label>
                           <input
                             type="text"
@@ -1072,7 +1177,7 @@ export default function App() {
                                 organization: e.target.value,
                               }))
                             }
-                            placeholder="Назва школи або громади"
+                            placeholder={content.contactsSection.fields.orgPlaceholder}
                             className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 disabled:opacity-60"
                           />
                         </div>
@@ -1083,21 +1188,32 @@ export default function App() {
                           htmlFor="contact-topic"
                           className="block text-sm font-medium text-harmony-ink mb-1.5"
                         >
-                          Тема звернення
+                          {content.contactsSection.fields.topicLabel}
                         </label>
                         <select
                           id="contact-topic"
                           disabled={isContactSubmitting}
                           value={contactForm.topic}
                           onChange={(e) =>
-                            setContactForm((prev) => ({ ...prev, topic: e.target.value }))
+                            setContactForm((prev) => ({
+                              ...prev,
+                              topic: e.target.value as ContactTopicKey,
+                            }))
                           }
                           className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading disabled:opacity-60"
                         >
-                          <option value="school">Долучити школу до проєкту</option>
-                          <option value="training">Навчання для вчителів</option>
-                          <option value="partnership">Партнерство / Підтримка</option>
-                          <option value="other">Інше питання</option>
+                          <option value="school">
+                            {content.contactsSection.fields.topics.school}
+                          </option>
+                          <option value="training">
+                            {content.contactsSection.fields.topics.training}
+                          </option>
+                          <option value="partnership">
+                            {content.contactsSection.fields.topics.partnership}
+                          </option>
+                          <option value="other">
+                            {content.contactsSection.fields.topics.other}
+                          </option>
                         </select>
                       </div>
 
@@ -1106,7 +1222,7 @@ export default function App() {
                           htmlFor="contact-message"
                           className="block text-sm font-medium text-harmony-ink mb-1.5"
                         >
-                          Повідомлення *
+                          {content.contactsSection.fields.messageLabel}
                         </label>
                         <textarea
                           id="contact-message"
@@ -1116,20 +1232,23 @@ export default function App() {
                           value={contactForm.message}
                           onChange={(e) => {
                             setContactForm((prev) => ({ ...prev, message: e.target.value }));
-                            if (contactError) setContactError(null);
+                            if (contactErrorKey) setContactErrorKey(null);
                           }}
-                          placeholder="Розкажіть коротко про вашу школу або запит..."
+                          placeholder={content.contactsSection.fields.messagePlaceholder}
                           className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 resize-y disabled:opacity-60"
                         />
                       </div>
 
-                      {contactError && (
+                      {contactErrorKey && (
                         <div
                           role="alert"
                           className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm"
                         >
-                          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" aria-hidden="true" />
-                          <span>{contactError}</span>
+                          <AlertCircle
+                            className="w-4 h-4 shrink-0 text-red-600"
+                            aria-hidden="true"
+                          />
+                          <span>{content.contactsSection.errors[contactErrorKey]}</span>
                         </div>
                       )}
 
@@ -1141,12 +1260,15 @@ export default function App() {
                         {isContactSubmitting ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-                            Надсилання...
+                            {content.contactsSection.submitLoading}
                           </>
                         ) : (
                           <>
-                            Надіслати повідомлення
-                            <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
+                            {content.contactsSection.submitIdle}
+                            <Send
+                              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                              aria-hidden="true"
+                            />
                           </>
                         )}
                       </button>
@@ -1167,24 +1289,22 @@ export default function App() {
             <Reveal className="grid lg:grid-cols-12 gap-8 lg:gap-8 items-center">
               <div className="lg:col-span-4 lg:pr-7 lg:border-r lg:border-white/15">
                 <blockquote className="font-serif italic text-base sm:text-lg leading-relaxed text-emerald-50">
-                  «Ми не стоїмо осторонь від природи. Як і все інше, ми є частиною Природи. Насправді — ми є Природою.»
+                  {content.footer.quote}
                 </blockquote>
                 <p className="text-xs font-medium tracking-wider text-harmony-sun mt-3">
-                  — Передмова до посібника Проєкту «Гармонія»
+                  {content.footer.quoteAuthor}
                 </p>
               </div>
 
               <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-x-2.5 gap-y-5">
-                {HARMONY_PRINCIPLES.map((principle, idx) => (
+                {content.footer.principles.map((principle, idx) => (
                   <div
-                    key={principle.label}
+                    key={principle.iconName}
                     className="group flex flex-col items-center text-center gap-2.5"
                   >
                     <div
                       className={`w-11 h-11 rounded-full bg-white/12 border border-white/18 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
-                        idx === 4 || idx === 6
-                          ? 'text-harmony-sun'
-                          : 'text-emerald-200'
+                        idx === 4 || idx === 6 ? 'text-harmony-sun' : 'text-emerald-200'
                       }`}
                     >
                       {renderHarmonyPrincipleIcon(principle.iconName)}
@@ -1214,38 +1334,39 @@ export default function App() {
                 <a
                   href="#top"
                   className="inline-flex items-center py-1 bg-transparent group focus-visible:rounded-xl"
-                  aria-label="The Harmony Project — на початок сторінки"
+                  aria-label={content.header.logoAriaLabel}
                 >
                   <Logo variant="dark" />
                 </a>
                 <p className="text-sm text-emerald-50/85 max-w-md leading-relaxed text-justify hyphens-auto">
-                  Новий спосіб пізнавати світ і навчатися у природи — поєднуючи цінності, дослідницькі запити та практичну турботу про довкілля й спільноту.
+                  {content.footer.description}
                 </p>
               </div>
 
               <div className="md:col-span-6">
                 <h4 className="font-serif text-xl font-bold tracking-wide mb-2">
-                  Спільнота для практики
+                  {content.footer.communityTitle}
                 </h4>
                 <p className="text-sm text-emerald-50/85 leading-relaxed max-w-lg mb-5 text-justify hyphens-auto">
-                  Відкриті до співпраці зі школами, педагогами та освітніми ініціативами України. Разом формуємо освіту 21 століття, вкорінену в принципах природи.
+                  {content.footer.communityDescription}
                 </p>
                 <a
                   href="#contacts"
                   className="font-ui inline-flex items-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-[15px] font-semibold tracking-tight px-6 py-3 rounded-full shadow-xs transition-all duration-200 hover:-translate-y-0.5"
                 >
-                  <span>Зв’язатися з нами</span>
+                  <span>{content.footer.contactButton}</span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </a>
               </div>
             </div>
 
             <div className="pt-7 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-emerald-100/75">
-              <p>
-                © 2026 Проєкт «Гармонія» (The Harmony Project). Усі права захищено.
-              </p>
-              <nav aria-label="Навігація у футері" className="font-ui flex flex-wrap items-center justify-center gap-2">
-                {NAV_ITEMS.map((item) => {
+              <p>{content.footer.copyright}</p>
+              <nav
+                aria-label={content.footer.navAriaLabel}
+                className="font-ui flex flex-wrap items-center justify-center gap-2"
+              >
+                {content.navItems.map((item) => {
                   const isActive = activeSection === item.id;
                   return (
                     <a
@@ -1270,19 +1391,22 @@ export default function App() {
       {/* МОДАЛЬНЕ ВІКНО ДЛЯ ЧИТАННЯ ПОВНОГО ТЕКСТУ НОВИНИ */}
       <NewsModal
         article={selectedNews}
-        articles={newsArticles}
-        onClose={() => setSelectedNews(null)}
-        onSelectArticle={(article) => setSelectedNews(article)}
+        articles={localizedNews}
+        labels={content.newsSection.modal}
+        onClose={() => setSelectedNewsId(null)}
+        onSelectArticle={(articleId) => setSelectedNewsId(articleId)}
       />
 
       {/* МОДАЛЬНА ФОРМА «ДОЛУЧИТИСЯ» */}
       <JoinModal
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
+        labels={content.joinModal}
+        errors={content.contactsSection.errors}
       />
 
       {/* МОДУЛЬ ВЕБДОСТУПНОСТІ (ACCESSIBILITY WIDGET) */}
-      <AccessibilityWidget />
+      <AccessibilityWidget labels={content.accessibility} />
     </div>
   );
 }
