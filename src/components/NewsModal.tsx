@@ -83,7 +83,7 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        className={`bg-white rounded-3xl max-w-2xl w-full relative shadow-2xl border border-teal-900/10 max-h-[90vh] overflow-y-auto transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`bg-white rounded-3xl max-w-2xl w-full relative shadow-2xl border border-emerald-900/10 max-h-[90vh] overflow-y-auto transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           isEntered
             ? 'opacity-100 scale-100 translate-y-0'
             : 'opacity-0 scale-95 translate-y-3'
@@ -95,7 +95,7 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
           type="button"
           onClick={onClose}
           aria-label="Закрити новину"
-          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/95 hover:bg-harmony-sand text-harmony-dark border border-teal-900/10 flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm"
+          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/95 hover:bg-harmony-sand text-harmony-heading border border-emerald-900/10 flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm"
         >
           <X className="w-5 h-5" />
         </button>
@@ -124,7 +124,7 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
 
           <h3
             id="news-modal-title"
-            className="font-serif text-2xl sm:text-3xl font-bold text-harmony-dark leading-snug mb-6"
+            className="font-serif text-2xl sm:text-3xl font-bold text-harmony-heading leading-snug mb-6"
           >
             {renderedArticle.title}
           </h3>
@@ -135,17 +135,17 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
             ))}
           </div>
 
-          <div className="mt-6 p-5 rounded-2xl bg-harmony-sage/85 border border-teal-900/10 text-sm text-harmony-dark leading-relaxed">
+          <div className="mt-6 p-5 rounded-2xl bg-harmony-sage/85 border border-emerald-900/10 text-sm text-harmony-heading leading-relaxed">
             {renderedArticle.highlight}
           </div>
 
-          <div className="mt-8 pt-6 border-t border-teal-900/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="mt-8 pt-6 border-t border-emerald-900/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               {prevArticle && (
                 <button
                   type="button"
                   onClick={() => onSelectArticle(prevArticle)}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-harmony-ink hover:text-harmony-dark px-3.5 py-2 rounded-full border border-teal-900/15 hover:bg-harmony-cream transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-harmony-ink hover:text-harmony-heading px-3.5 py-2 rounded-full border border-emerald-900/15 hover:bg-harmony-cream transition-colors"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
                   Попередня
@@ -155,7 +155,7 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
                 <button
                   type="button"
                   onClick={() => onSelectArticle(nextArticle)}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-harmony-ink hover:text-harmony-dark px-3.5 py-2 rounded-full border border-teal-900/15 hover:bg-harmony-cream transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-harmony-ink hover:text-harmony-heading px-3.5 py-2 rounded-full border border-emerald-900/15 hover:bg-harmony-cream transition-colors"
                 >
                   Наступна
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -166,7 +166,7 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
             <a
               href="#contacts"
               onClick={onClose}
-              className="inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-dark text-white text-sm font-medium px-5 py-2.5 rounded-full transition-colors whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-xs transition-colors whitespace-nowrap"
             >
               Зв’язатися з командою
               <ArrowRight className="w-4 h-4" />

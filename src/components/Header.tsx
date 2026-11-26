@@ -58,8 +58,8 @@ export function Header({ activeSection }: HeaderProps) {
     <header
       className={`sticky top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-harmony-cream/95 backdrop-blur-md border-b border-teal-900/10 shadow-[0_6px_24px_-16px_rgba(18,52,59,0.18)]'
-          : 'bg-harmony-cream/95 backdrop-blur-sm border-b border-teal-900/10'
+          ? 'bg-harmony-cream/95 backdrop-blur-md border-b border-emerald-900/10 shadow-[0_6px_24px_-16px_rgba(24,78,72,0.16)]'
+          : 'bg-harmony-cream/95 backdrop-blur-sm border-b border-emerald-900/10'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -90,7 +90,7 @@ export function Header({ activeSection }: HeaderProps) {
                   key={item.id}
                   href={item.href}
                   className={`relative py-1 whitespace-nowrap shrink-0 transition-colors duration-200 hover:text-harmony-primary ${
-                    isActive ? 'text-harmony-dark font-semibold' : 'text-harmony-ink'
+                    isActive ? 'text-harmony-heading font-semibold' : 'text-harmony-ink'
                   }`}
                 >
                   {item.label}
@@ -109,7 +109,7 @@ export function Header({ activeSection }: HeaderProps) {
           <div className="flex items-center gap-3 shrink-0">
             <a
               href="#contacts"
-              className="hidden md:inline-flex items-center justify-center bg-harmony-primary hover:bg-harmony-dark text-white text-sm font-medium px-5 py-2.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap shrink-0"
+              className="hidden md:inline-flex items-center justify-center bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-xs transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap shrink-0"
             >
               Долучитися
             </a>
@@ -120,7 +120,7 @@ export function Header({ activeSection }: HeaderProps) {
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-navigation"
               aria-label={mobileMenuOpen ? 'Закрити меню' : 'Відкрити меню'}
-              className="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-xl text-harmony-dark hover:bg-harmony-sand transition-colors"
+              className="md:hidden inline-flex items-center justify-center w-11 h-11 rounded-xl text-harmony-heading hover:bg-harmony-sand transition-colors"
             >
               <span
                 className={`inline-flex transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
@@ -147,7 +147,7 @@ export function Header({ activeSection }: HeaderProps) {
         <div className="overflow-hidden">
           <nav
             aria-label="Мобільна навігація"
-            className="bg-white/98 backdrop-blur-md border-b border-teal-900/10 px-4 pt-2 pb-6 shadow-md"
+            className="bg-white/98 backdrop-blur-md border-b border-emerald-900/10 px-4 pt-2 pb-6 shadow-md"
           >
             <div className="flex flex-col space-y-1">
               {NAV_ITEMS.map((item) => {
@@ -160,8 +160,8 @@ export function Header({ activeSection }: HeaderProps) {
                     onClick={handleNavClick}
                     className={`flex items-center justify-between min-h-[44px] px-3 rounded-xl text-base font-medium transition-colors ${
                       isActive
-                        ? 'bg-harmony-sand text-harmony-dark font-semibold'
-                        : 'text-harmony-ink hover:bg-harmony-sand/70 hover:text-harmony-dark'
+                        ? 'bg-harmony-sand text-harmony-heading font-semibold'
+                        : 'text-harmony-ink hover:bg-harmony-sand/70 hover:text-harmony-heading'
                     }`}
                   >
                     {item.label}
@@ -172,7 +172,7 @@ export function Header({ activeSection }: HeaderProps) {
                 href="#contacts"
                 tabIndex={mobileMenuOpen ? 0 : -1}
                 onClick={handleNavClick}
-                className="mt-3 flex items-center justify-center min-h-[46px] bg-harmony-primary hover:bg-harmony-dark text-white font-medium px-5 py-3 rounded-full transition-colors text-sm"
+                className="mt-3 flex items-center justify-center min-h-[46px] bg-harmony-primary hover:bg-harmony-primary-hover text-white font-semibold px-5 py-3 rounded-full shadow-xs transition-colors text-sm"
               >
                 Долучитися
               </a>

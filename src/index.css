@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  /* Палітра «Карпатський туман та Морська бірюза» (Nordic Mist & Botanical Teal) */
-  --color-harmony-dark: #12343B;     /* Глибокий фьорд / хвойно-бірюзовий (футер, заголовки, темні блоки) */
-  --color-harmony-primary: #2A7B6F;  /* Насичений ботанічний малахіт (кнопки, активні елементи) */
-  --color-harmony-emerald: #2A7B6F;  /* Бірюзово-зелений акцент для іконок та маркерів */
-  --color-harmony-sage: #DDF0EC;     /* М'яка підкладка під іконки та бейджі */
-  --color-harmony-cream: #F4F8F7;    /* Ранковий гірський туман — основний фон сторінки */
-  --color-harmony-sand: #E4EFEA;     /* Світла морська піна / евкаліпт для вторинних секцій */
-  --color-harmony-sky: #3898EC;      /* Чистий небесно-блакитний акцент */
-  --color-harmony-sun: #E6A15C;      /* Теплий бурштин (цифри статистики, маркери у футері) */
-  --color-harmony-ink: #334E52;      /* Глибокий приглушений графітово-хвойний для тексту */
+  /* Світла життєрадісна природна палітра (Fresh Emerald & Airy Mint) */
+  --color-harmony-dark: #1D5B57;          /* М'який благородний хвойно-бірюзовий (футер, темні акцентні блоки) */
+  --color-harmony-heading: #184E48;       /* Живий глибокий зелений для заголовків h1–h4 */
+  --color-harmony-primary: #22A06B;       /* Свіжий природний смарагдово-зелений (кнопки, бейджі, акценти) */
+  --color-harmony-primary-hover: #1A7F56; /* Насиченіший зелений при наведенні на кнопки */
+  --color-harmony-emerald: #22A06B;       /* Смарагдово-зелений акцент для іконок та маркерів */
+  --color-harmony-sage: #D4EFE3;          /* Світла підкладка під іконки та теги */
+  --color-harmony-cream: #F7FBF9;         /* Повітряний м'ятно-білий — основний фон сторінки */
+  --color-harmony-sand: #EAF6F0;          /* Ніжний світло-зелений для вторинних секцій */
+  --color-harmony-sky: #3898EC;           /* Чистий небесно-блакитний акцент */
+  --color-harmony-sun: #E6A15C;           /* Теплий бурштин (цифри статистики, акценти у футері) */
+  --color-harmony-ink: #3A5450;           /* М'який графітово-зелений для комфортного читання тексту */
 
   /* Типографіка */
   --font-serif: "Playfair Display", Georgia, Cambria, serif;
@@ -116,7 +118,7 @@
 
 .group:hover .logo-hover-organic {
   transform: scale(1.04);
-  filter: drop-shadow(0 6px 14px rgba(42, 123, 111, 0.26));
+  filter: drop-shadow(0 6px 14px rgba(34, 160, 107, 0.28));
   animation: logoBreath 2.4s ease-in-out infinite;
 }
 

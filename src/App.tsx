@@ -228,7 +228,7 @@ export default function App() {
 
       <main className="flex-1">
         {/* 1. HERO СЕКЦІЯ (Освіта в гармонії з життям + макрофото пухнастої кульбаби праворуч) */}
-        <section className="relative overflow-hidden bg-[#F4F8F7] border-b border-teal-900/10">
+        <section className="relative overflow-hidden bg-[#F7FBF9] border-b border-emerald-900/10">
           {/* HERO IMAGE: Кульбаба (можна замінити на власне фото images/dandelion-hero.jpg) */}
           <div
             aria-hidden="true"
@@ -239,60 +239,55 @@ export default function App() {
               alt="Стигла пухнаста кульбаба у ранковому світлі з насінинами, що розлітаються у повітрі"
               placeholderPath="images/dandelion-hero.jpg"
               priority
-              className="w-full h-full bg-[#F4F8F7]"
+              className="w-full h-full bg-[#F7FBF9]"
               imgClassName="object-right dandelion-breeze"
             />
-            {/* М'яка градієнтна маска для безшовного злиття кульбаби зі світлим фоном #F4F8F7 */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#F4F8F7] via-[#F4F8F7]/80 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#F4F8F7]/70 to-transparent" />
+            {/* М'яка градієнтна маска для безшовного злиття кульбаби зі світлим фоном #F7FBF9 */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#F7FBF9] via-[#F7FBF9]/80 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#F7FBF9]/70 to-transparent" />
           </div>
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10 sm:pt-16 sm:pb-16 lg:py-24 xl:py-28">
             <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
               {/* Ліва текстова частина поверх світлої зони банера */}
               <div className="hero-enter lg:col-span-6 xl:col-span-6 space-y-6">
-                <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.75rem] font-semibold text-harmony-dark leading-[1.1] tracking-tight">
-                  Освіта <br />в{' '}
-                  <span className="text-harmony-primary">гармонії</span> з життям.
+                <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.5rem] font-semibold text-harmony-heading leading-[1.12] tracking-tight">
+                  Освіта, що оживає{' '}
+                  <span className="text-harmony-primary">в гармонії з життям.</span>
                 </h1>
 
-                <div className="space-y-2.5 text-base sm:text-[17px] text-harmony-ink max-w-lg leading-relaxed">
-                  <p>
-                    Ми допомагаємо дітям і молоді розкривати потенціал, спираючись на принципи природи.
-                  </p>
-                  <p className="font-medium text-harmony-dark">
-                    Для мирного, стійкого і кращого майбутнього України.
-                  </p>
-                </div>
+                <p className="text-base sm:text-[17px] text-harmony-ink max-w-xl leading-relaxed">
+                  Навчання, засноване на принципах природи: від запитів і досліджень до значущих «Великих робіт». Підтримуємо добробут українських учнів і педагогів, формуючи покоління відповідальних лідерів сталого майбутнього.
+                </p>
 
                 <div className="flex flex-wrap items-center gap-3.5 pt-2">
                   <a
                     href="#approach"
-                    className="group inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-dark text-white text-sm sm:text-base font-medium px-6 py-3.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
+                    className="group inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm sm:text-base font-semibold px-6 py-3.5 rounded-full shadow-xs transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
                   >
-                    Відкрити наш підхід
+                    Відкрити підхід
                     <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                   </a>
                   <a
                     href="#schools"
-                    className="inline-flex items-center justify-center bg-white/90 hover:bg-harmony-sand text-harmony-dark border border-teal-900/15 text-sm sm:text-base font-medium px-6 py-3.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 whitespace-nowrap backdrop-blur-xs"
+                    className="inline-flex items-center justify-center bg-white/95 hover:bg-harmony-sand text-harmony-heading border border-emerald-900/15 text-sm sm:text-base font-medium px-6 py-3.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 whitespace-nowrap backdrop-blur-xs"
                   >
-                    Для шкіл в Україні
+                    Впровадити у школі
                   </a>
                 </div>
 
                 {/* Слоган під кнопками (як на початковому макеті) */}
-                <div className="pt-5 border-t border-teal-900/10 flex items-center gap-2.5 text-xs sm:text-sm text-harmony-ink max-w-md">
+                <div className="pt-5 border-t border-emerald-900/10 flex items-center gap-2.5 text-xs sm:text-sm text-harmony-ink max-w-lg">
                   <Sprout className="w-4 h-4 text-harmony-primary shrink-0" strokeWidth={2} />
                   <span>
-                    <strong className="font-semibold text-harmony-dark">Вкорінені в природі.</strong>{' '}
-                    Створені для нашого майбутнього.
+                    <strong className="font-semibold text-harmony-heading">Природа — наш учитель.</strong>{' '}
+                    Вкорінені у цінностях, відкриті до світу.
                   </span>
                 </div>
               </div>
 
               {/* Мобільна та планшетна версія фото кульбаби з плавним переходом зверху */}
-              <div className="hero-enter-delayed lg:hidden relative rounded-3xl overflow-hidden border border-teal-900/10 aspect-[16/10] bg-[#F4F8F7]">
+              <div className="hero-enter-delayed lg:hidden relative rounded-3xl overflow-hidden border border-emerald-900/10 aspect-[16/10] bg-[#F7FBF9]">
                 {/* HERO IMAGE: Кульбаба (можна замінити на власне фото images/dandelion-hero.jpg) */}
                 <MediaFrame
                   src={MEDIA_ASSETS.heroDandelion}
@@ -304,7 +299,7 @@ export default function App() {
                 />
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#F4F8F7]/65 via-transparent to-transparent"
+                  className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#F7FBF9]/65 via-transparent to-transparent"
                 />
               </div>
             </div>
@@ -314,7 +309,7 @@ export default function App() {
         {/* 2. ЧОТИРИ ОПОРИ ПІДХОДУ ГАРМОНІЇ */}
         <section
           id="approach"
-          className="py-14 sm:py-18 lg:py-22 bg-harmony-sand border-y border-teal-900/10"
+          className="py-14 sm:py-18 lg:py-22 bg-harmony-sand border-y border-emerald-900/10"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Reveal className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-10 lg:mb-12">
@@ -322,31 +317,31 @@ export default function App() {
                 <p className="text-xs sm:text-sm font-medium text-harmony-sky mb-2">
                   Наш підхід у чотирьох елементах
                 </p>
-                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-dark leading-tight">
-                  Чотири опори підходу Гармонії
+                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-heading leading-tight">
+                  Чотири опори підходу <span className="text-harmony-primary">Гармонії</span>
                 </h2>
               </div>
               <p className="text-sm sm:text-base text-harmony-ink max-w-md leading-relaxed">
-                Чотири взаємопов’язані елементи, що формують як навчання, так і культуру школи.
+                Цілісна система, де шкільні предмети поєднуються з життєвим досвідом, творчістю та турботою про світ.
               </p>
             </Reveal>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
               {PILLARS.map((pillar, index) => (
                 <Reveal
                   key={pillar.number}
                   delayMs={getStaggerDelay(index)}
                   className="h-full"
                 >
-                  <article className="group h-full bg-white rounded-3xl overflow-hidden border border-teal-900/10 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(18,52,59,0.18)] hover:border-harmony-emerald/50">
-                    <div className="p-6 pb-5">
+                  <article className="group h-full bg-white rounded-3xl overflow-hidden border border-emerald-900/10 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(24,78,72,0.16)] hover:border-harmony-emerald/50">
+                    <div className="p-6 pb-5 flex-1 flex flex-col">
                       <div
-                        className={`w-12 h-12 rounded-full ${pillar.badgeTone} text-white flex items-center justify-center mb-5 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110`}
+                        className={`w-12 h-12 rounded-full ${pillar.badgeTone} text-white flex items-center justify-center mb-5 shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110`}
                       >
                         {renderPillarIcon(pillar.iconName)}
                       </div>
 
-                      <h3 className="font-serif text-xl font-bold text-harmony-dark mb-2">
+                      <h3 className="font-serif text-xl font-bold text-harmony-heading mb-2">
                         {pillar.title}
                       </h3>
 
@@ -359,7 +354,7 @@ export default function App() {
                       src={pillar.image}
                       alt={pillar.imageAlt}
                       placeholderPath={pillar.placeholderPath}
-                      className="aspect-[4/3] w-full mt-auto"
+                      className="aspect-[4/3] w-full shrink-0 mt-auto"
                       imgClassName="transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                     />
                   </article>
@@ -375,17 +370,17 @@ export default function App() {
             <div className="grid lg:grid-cols-3 gap-6 lg:gap-7 items-stretch">
               {/* Картка 1 */}
               <Reveal delayMs={100} className="h-full">
-                <article className="group h-full bg-white rounded-3xl overflow-hidden border border-teal-900/10 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(18,52,59,0.18)] hover:border-harmony-emerald/45">
-                  <div className="p-7 sm:p-8 pb-6">
-                    <h2 className="font-serif text-2xl sm:text-[1.65rem] font-bold text-harmony-dark leading-snug mb-3.5">
+                <article className="group h-full bg-white rounded-3xl overflow-hidden border border-emerald-900/10 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(24,78,72,0.16)] hover:border-harmony-emerald/45">
+                  <div className="p-7 sm:p-8 pb-6 flex-1 flex flex-col">
+                    <h2 className="font-serif text-2xl sm:text-[1.65rem] font-bold text-harmony-heading leading-snug mb-3.5">
                       Навчання, що зростає разом із дитиною
                     </h2>
                     <p className="text-harmony-ink text-sm sm:text-[15px] leading-relaxed mb-5">
-                      Від раннього дитинства до юності ми підтримуємо цілісне навчання — розумом, серцем і руками, допомагаючи учням відчувати безпеку та рівновагу.
+                      Коли природа стає нашим учителем, навчання оживає. Від раннього дитинства до юності ми розвиваємо допитливість, творчість і вміння бачити цілісність світу розумом, серцем і руками.
                     </p>
                     <a
                       href="#schools"
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-harmony-primary hover:text-harmony-dark transition-colors"
+                      className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-harmony-primary hover:text-harmony-primary-hover transition-colors"
                     >
                       Дізнатися більше
                       <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -395,7 +390,7 @@ export default function App() {
                     src={MEDIA_ASSETS.natureDetail}
                     alt="Українські школярі малюють аквареллю листя та квіти на галявині"
                     placeholderPath="images/nature-detail.jpg"
-                    className="aspect-[16/11] w-full mt-auto"
+                    className="aspect-[16/11] w-full shrink-0 mt-auto"
                     imgClassName="transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                   />
                 </article>
@@ -403,17 +398,17 @@ export default function App() {
 
               {/* Картка 2 */}
               <Reveal delayMs={200} className="h-full">
-                <article className="group h-full bg-white rounded-3xl overflow-hidden border border-teal-900/10 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(18,52,59,0.18)] hover:border-harmony-emerald/45">
-                  <div className="p-7 sm:p-8 pb-6">
-                    <h2 className="font-serif text-2xl sm:text-[1.65rem] font-bold text-harmony-dark leading-snug mb-3.5">
+                <article className="group h-full bg-white rounded-3xl overflow-hidden border border-emerald-900/10 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(24,78,72,0.16)] hover:border-harmony-emerald/45">
+                  <div className="p-7 sm:p-8 pb-6 flex-1 flex flex-col">
+                    <h2 className="font-serif text-2xl sm:text-[1.65rem] font-bold text-harmony-heading leading-snug mb-3.5">
                       Підтримуємо дітей України сьогодні
                     </h2>
                     <p className="text-harmony-ink text-sm sm:text-[15px] leading-relaxed mb-5">
-                      Ми допомагаємо школам і громадам долати стрес, будувати стійкість і відновлювати надію під час війни та після неї.
+                      Допомагаємо школам і громадам зміцнювати психологічний добробут учнів та педагогів. Через турботу про довкілля, спільні проєкти й тихі хвилини споглядання діти відновлюють внутрішню рівновагу та надію.
                     </p>
                     <a
                       href="#wellbeing"
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-harmony-sky hover:text-harmony-dark transition-colors"
+                      className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-harmony-sky hover:text-harmony-heading transition-colors"
                     >
                       Читати більше
                       <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -431,16 +426,16 @@ export default function App() {
 
               {/* Картка 3: Контрастний блок «Реальний вплив» з анімованими лічильниками */}
               <Reveal delayMs={300} className="h-full">
-                <div className="group relative overflow-hidden h-full bg-harmony-dark text-white rounded-3xl p-7 sm:p-8 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_22px_42px_-16px_rgba(18,52,59,0.32)]">
+                <div className="group relative overflow-hidden h-full bg-harmony-dark text-white rounded-3xl p-7 sm:p-8 flex flex-col justify-between transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_22px_42px_-16px_rgba(29,91,87,0.32)]">
                   <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute -bottom-16 -right-16 w-56 h-56 text-harmony-emerald/[0.1] seed-spin-hover"
+                    className="pointer-events-none absolute -bottom-16 -right-16 w-56 h-56 text-white/[0.08] seed-spin-hover"
                   >
                     <SeedOfLifeMark className="w-full h-full" />
                   </div>
 
                   <div className="relative">
-                    <p className="text-xs font-medium text-sky-300 tracking-wide mb-1.5">
+                    <p className="text-xs font-medium text-sky-200 tracking-wide mb-1.5">
                       Вимірювані результати
                     </p>
                     <h2 className="font-serif text-2xl sm:text-[1.75rem] font-bold tracking-wide mb-8">
@@ -451,8 +446,8 @@ export default function App() {
                       {IMPACT_METRICS.map((metric, idx) => (
                         <div key={metric.label} className="flex items-center gap-4">
                           <div
-                            className={`w-12 h-12 rounded-full bg-white/10 border border-white/15 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
-                              idx === 1 ? 'text-sky-300' : 'text-harmony-sun'
+                            className={`w-12 h-12 rounded-full bg-white/12 border border-white/18 flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-105 ${
+                              idx === 1 ? 'text-sky-200' : 'text-harmony-sun'
                             }`}
                           >
                             {renderImpactIcon(metric.iconName)}
@@ -465,7 +460,7 @@ export default function App() {
                                 durationMs={1800}
                               />
                             </div>
-                            <div className="text-sm text-teal-100/90 mt-0.5">
+                            <div className="text-sm text-emerald-50/90 mt-0.5">
                               {metric.label}
                             </div>
                           </div>
@@ -477,7 +472,7 @@ export default function App() {
                   <div className="relative pt-8 mt-8 border-t border-white/15">
                     <a
                       href="#news"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-sky-300 hover:text-white transition-colors"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-sky-200 hover:text-white transition-colors"
                     >
                       Історії впливу
                       <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -492,7 +487,7 @@ export default function App() {
         {/* 4. ДЛЯ ШКІЛ В УКРАЇНІ */}
         <section
           id="schools"
-          className="py-16 sm:py-20 lg:py-24 bg-harmony-sand border-y border-teal-900/10"
+          className="py-16 sm:py-20 lg:py-24 bg-harmony-sand border-y border-emerald-900/10"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 lg:space-y-20">
             {/* 4.1 Як ми працюємо зі школами */}
@@ -501,26 +496,26 @@ export default function App() {
                 <p className="text-xs sm:text-sm font-medium text-harmony-sky mb-2">
                   Для шкіл в Україні
                 </p>
-                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-dark leading-tight">
-                  Як ми працюємо зі школами
+                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-heading leading-tight">
+                  Як ми працюємо зі <span className="text-harmony-primary">школами</span>
                 </h2>
                 <p className="text-harmony-ink mt-3 text-base leading-relaxed">
-                  Ми співпрацюємо зі школами, щоб інтегрувати Гармонію в навчальну програму НУШ та культуру школи через перевірений і гнучкий підхід.
+                  Пропонуємо перевірений і гнучкий шлях інтеграції підходу «Гармонії» в навчальний процес та повсякденну культуру сучасної української школи.
                 </p>
               </Reveal>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-5 items-stretch">
                 {SCHOOL_FEATURES.map((feature, index) => (
                   <Reveal
                     key={feature.title}
                     delayMs={getStaggerDelay(index)}
                     className="h-full"
                   >
-                    <div className="group h-full bg-white rounded-2xl p-5 sm:p-6 border border-teal-900/10 text-left lg:text-center flex flex-col lg:items-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_16px_32px_-16px_rgba(18,52,59,0.16)] hover:border-harmony-emerald/45">
+                    <div className="group h-full bg-white rounded-2xl p-5 sm:p-6 border border-emerald-900/10 text-left lg:text-center flex flex-col lg:items-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_16px_32px_-16px_rgba(24,78,72,0.15)] hover:border-harmony-emerald/45">
                       <div className="w-12 h-12 rounded-2xl bg-harmony-sage text-harmony-emerald flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
                         {renderSchoolFeatureIcon(feature.iconName)}
                       </div>
-                      <h3 className="font-serif font-bold text-base sm:text-lg text-harmony-dark mb-2">
+                      <h3 className="font-serif font-bold text-base sm:text-lg text-harmony-heading mb-2">
                         {feature.title}
                       </h3>
                       <p className="text-xs sm:text-[13px] text-harmony-ink leading-relaxed">
@@ -534,13 +529,13 @@ export default function App() {
 
             {/* 4.2 Навчання, що підтримує добробут і стійкість */}
             <div id="wellbeing" className="scroll-mt-24">
-              <Reveal className="bg-white rounded-3xl p-7 sm:p-10 border border-teal-900/10">
+              <Reveal className="bg-white rounded-3xl p-7 sm:p-10 border border-emerald-900/10">
                 <div className="max-w-3xl mb-8">
-                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-harmony-dark leading-tight">
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-harmony-heading leading-tight">
                     Навчання, що підтримує добробут і стійкість
                   </h3>
                   <p className="text-harmony-ink text-sm sm:text-base mt-3 leading-relaxed">
-                    Ми підтримуємо цілісне благополуччя дитини — розуму, серця і тіла. Наш підхід допомагає зменшити стрес, зміцнити емоційну рівновагу та створити безпечне, підтримувальне середовище для кожного учня.
+                    Коли діти навчаються у зв’язку з природою, вони почуваються добре і впевнено. Ми створюємо в школі простір довіри, спокою та взаємної підтримки для кожного учня й педагога.
                   </p>
                 </div>
 
@@ -548,22 +543,22 @@ export default function App() {
                   {WELLBEING_BENEFITS.map((benefit) => (
                     <div
                       key={benefit.title}
-                      className="group flex flex-col items-center text-center p-4 rounded-2xl bg-harmony-cream border border-teal-900/10 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:shadow-sm hover:border-harmony-emerald/40"
+                      className="group flex flex-col items-center text-center p-4 rounded-2xl bg-harmony-cream border border-emerald-900/10 transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1 hover:shadow-sm hover:border-harmony-emerald/40"
                     >
                       <div className="w-11 h-11 rounded-full bg-harmony-sage text-harmony-emerald flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-110">
                         {renderWellbeingIcon(benefit.iconName)}
                       </div>
-                      <p className="text-xs sm:text-sm font-medium text-harmony-dark leading-snug">
+                      <p className="text-xs sm:text-sm font-medium text-harmony-heading leading-snug">
                         {benefit.title}
                       </p>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-6 p-4 sm:p-5 rounded-2xl bg-sky-50/80 border border-harmony-sky/20 flex items-center gap-3.5 text-xs sm:text-sm text-harmony-dark">
-                  <Sprout className="w-5 h-5 text-harmony-sky shrink-0" strokeWidth={1.85} />
+                <div className="mt-6 p-4 sm:p-5 rounded-2xl bg-harmony-sand/85 border border-harmony-emerald/20 flex items-center gap-3.5 text-xs sm:text-sm text-harmony-heading">
+                  <Sprout className="w-5 h-5 text-harmony-primary shrink-0" strokeWidth={1.85} />
                   <p className="leading-relaxed">
-                    <strong className="font-semibold">Підтримка психологічного добробуту</strong> — один із ключових пріоритетів Проєкту Гармонія, особливо для дітей і педагогів в Україні.
+                    <strong className="font-semibold">Психологічний добробут і стійкість</strong> — ключовий пріоритет Проєкту «Гармонія», особливо важливий для українських дітей і педагогів сьогодні.
                   </p>
                 </div>
               </Reveal>
@@ -572,11 +567,11 @@ export default function App() {
             {/* 4.3 Ваш шлях упровадження (каскадна поява 100..500ms) */}
             <div>
               <Reveal className="max-w-2xl mb-10">
-                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-harmony-dark">
+                <h3 className="font-serif text-2xl sm:text-3xl font-bold text-harmony-heading">
                   Ваш шлях упровадження
                 </h3>
                 <p className="text-harmony-ink text-sm sm:text-base mt-2 leading-relaxed">
-                  Чіткий, підтримуваний шлях від першої розмови до сталих результатів у школі.
+                  Простий і підтримуваний маршрут від першого знайомства до живих змін у шкільній спільноті.
                 </p>
               </Reveal>
 
@@ -596,11 +591,11 @@ export default function App() {
                         : 'h-full'
                     }
                   >
-                    <div className="group relative h-full bg-white p-6 rounded-2xl border border-teal-900/10 flex flex-col items-start lg:items-center lg:text-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_36px_-18px_rgba(18,52,59,0.18)] hover:border-harmony-emerald/50">
+                    <div className="group relative h-full bg-white p-6 rounded-2xl border border-emerald-900/10 flex flex-col items-start lg:items-center lg:text-center transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_36px_-18px_rgba(24,78,72,0.16)] hover:border-harmony-emerald/50">
                       <span className="relative z-10 inline-flex items-center justify-center w-10 h-10 rounded-full bg-harmony-primary text-white font-serif font-bold text-base tabular-nums mb-4 ring-4 ring-white transition-transform duration-300 group-hover:scale-110">
                         {item.step}
                       </span>
-                      <h4 className="font-serif font-bold text-lg text-harmony-dark mb-2">
+                      <h4 className="font-serif font-bold text-lg text-harmony-heading mb-2">
                         {item.title}
                       </h4>
                       <p className="text-xs sm:text-[13px] text-harmony-ink leading-relaxed">
@@ -617,7 +612,7 @@ export default function App() {
               <div className="group relative overflow-hidden bg-harmony-dark rounded-3xl p-8 sm:p-11 lg:p-12 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-7">
                 <div
                   aria-hidden="true"
-                  className="pointer-events-none absolute -right-10 -bottom-14 w-64 h-64 text-harmony-emerald/[0.11] seed-spin-hover"
+                  className="pointer-events-none absolute -right-10 -bottom-14 w-64 h-64 text-white/[0.08] seed-spin-hover"
                 >
                   <SeedOfLifeMark className="w-full h-full" />
                 </div>
@@ -629,14 +624,14 @@ export default function App() {
                   <h3 className="font-serif text-2xl sm:text-3xl font-bold tracking-wide text-white">
                     Готові розпочати?
                   </h3>
-                  <p className="text-sm sm:text-base text-slate-200 leading-relaxed">
-                    Давайте будувати освіту, що підтримує дітей України — з силою природи та силою спільноти.
+                  <p className="text-sm sm:text-base text-emerald-50/90 leading-relaxed">
+                    Будуймо разом освіту 21 століття, яка підтримує дітей України — силою природи, цінностей та живої спільноти.
                   </p>
                 </div>
 
                 <a
                   href="#contacts"
-                  className="relative shrink-0 inline-flex items-center gap-2 bg-harmony-primary hover:bg-white hover:text-harmony-dark text-white font-medium text-sm sm:text-base px-7 py-3.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 active:scale-[0.98] whitespace-nowrap"
+                  className="relative shrink-0 inline-flex items-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white font-semibold text-sm sm:text-base px-7 py-3.5 rounded-full shadow-xs transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
                 >
                   Долучитися
                   <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -654,7 +649,7 @@ export default function App() {
                 <p className="text-xs sm:text-sm font-medium text-harmony-sky mb-2">
                   Події та публікації
                 </p>
-                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-dark leading-tight">
+                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-heading leading-tight">
                   Новини проєкту
                 </h2>
                 <p className="text-sm sm:text-base text-harmony-ink mt-3 leading-relaxed">
@@ -666,7 +661,7 @@ export default function App() {
               <div
                 role="tablist"
                 aria-label="Фільтр новин за категорією"
-                className="inline-flex flex-wrap items-center gap-1 p-1 bg-harmony-sand rounded-xl border border-teal-900/10 self-start lg:self-end"
+                className="inline-flex flex-wrap items-center gap-1 p-1 bg-harmony-sand rounded-xl border border-emerald-900/10 self-start lg:self-end"
               >
                 {NEWS_CATEGORIES.map((category) => {
                   const isSelected = activeCategory === category;
@@ -679,8 +674,8 @@ export default function App() {
                       onClick={() => setActiveCategory(category)}
                       className={`px-3.5 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap ${
                         isSelected
-                          ? 'bg-white text-harmony-dark shadow-xs'
-                          : 'text-harmony-ink hover:text-harmony-dark'
+                          ? 'bg-white text-harmony-heading shadow-xs'
+                          : 'text-harmony-ink hover:text-harmony-heading'
                       }`}
                     >
                       {category}
@@ -697,7 +692,7 @@ export default function App() {
                   delayMs={getStaggerDelay(index)}
                   className="h-full"
                 >
-                  <article className="group h-full bg-white rounded-3xl overflow-hidden border border-teal-900/10 flex flex-col transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(18,52,59,0.18)] hover:border-harmony-emerald/45">
+                  <article className="group h-full bg-white rounded-3xl overflow-hidden border border-emerald-900/10 flex flex-col transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-[0_18px_38px_-18px_rgba(24,78,72,0.16)] hover:border-harmony-emerald/45">
                     <button
                       type="button"
                       onClick={() => setSelectedNews(article)}
@@ -725,7 +720,7 @@ export default function App() {
                           <span>{article.readTime}</span>
                         </div>
 
-                        <h3 className="font-serif text-xl font-bold text-harmony-dark leading-snug mb-3 group-hover:text-harmony-primary transition-colors">
+                        <h3 className="font-serif text-xl font-bold text-harmony-heading leading-snug mb-3 group-hover:text-harmony-primary transition-colors">
                           <button
                             type="button"
                             onClick={() => setSelectedNews(article)}
@@ -740,11 +735,11 @@ export default function App() {
                         </p>
                       </div>
 
-                      <div className="pt-5 mt-5 border-t border-teal-900/10">
+                      <div className="pt-5 mt-5 border-t border-emerald-900/10">
                         <button
                           type="button"
                           onClick={() => setSelectedNews(article)}
-                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-harmony-primary hover:text-harmony-dark transition-colors"
+                          className="inline-flex items-center gap-1.5 text-sm font-semibold text-harmony-primary hover:text-harmony-primary-hover transition-colors"
                         >
                           Читати далі
                           <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -761,7 +756,7 @@ export default function App() {
         {/* 6. КОНТАКТИ ТА ФОРМА ЗВОРОТНОГО ЗВ'ЯЗКУ */}
         <section
           id="contacts"
-          className="py-16 sm:py-20 lg:py-24 bg-harmony-sand border-t border-teal-900/10"
+          className="py-16 sm:py-20 lg:py-24 bg-harmony-sand border-t border-emerald-900/10"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
@@ -771,8 +766,8 @@ export default function App() {
                   <p className="text-xs sm:text-sm font-medium text-harmony-sky mb-2">
                     Зв’яжіться з нами
                   </p>
-                  <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-dark leading-tight">
-                    Приєднайтеся до нашого руху
+                  <h2 className="font-serif text-3xl sm:text-4xl font-bold text-harmony-heading leading-tight">
+                    Приєднайтеся до <span className="text-harmony-primary">нашого руху</span>
                   </h2>
                 </div>
 
@@ -782,14 +777,14 @@ export default function App() {
 
                 <div className="space-y-4 pt-2">
                   <div className="flex items-start gap-4">
-                    <div className="w-11 h-11 rounded-full bg-white text-harmony-emerald border border-teal-900/10 flex items-center justify-center shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-white text-harmony-emerald border border-emerald-900/10 flex items-center justify-center shrink-0">
                       <Mail className="w-5 h-5" strokeWidth={1.8} />
                     </div>
                     <div>
                       <p className="text-xs text-harmony-ink/70">Електронна пошта</p>
                       <a
                         href="mailto:info@harmonyproject.org.ua"
-                        className="font-medium text-harmony-dark hover:text-harmony-primary transition-colors"
+                        className="font-medium text-harmony-heading hover:text-harmony-primary transition-colors"
                       >
                         info@harmonyproject.org.ua
                       </a>
@@ -797,14 +792,14 @@ export default function App() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="w-11 h-11 rounded-full bg-white text-harmony-sky border border-teal-900/10 flex items-center justify-center shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-white text-harmony-sky border border-emerald-900/10 flex items-center justify-center shrink-0">
                       <Phone className="w-5 h-5" strokeWidth={1.8} />
                     </div>
                     <div>
                       <p className="text-xs text-harmony-ink/70">Телефон координатора</p>
                       <a
                         href="tel:+380000000000"
-                        className="font-medium text-harmony-dark hover:text-harmony-primary transition-colors tabular-nums"
+                        className="font-medium text-harmony-heading hover:text-harmony-primary transition-colors tabular-nums"
                       >
                         +38 (0XX) XXX-XX-XX
                       </a>
@@ -812,12 +807,12 @@ export default function App() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="w-11 h-11 rounded-full bg-white text-harmony-emerald border border-teal-900/10 flex items-center justify-center shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-white text-harmony-emerald border border-emerald-900/10 flex items-center justify-center shrink-0">
                       <MapPin className="w-5 h-5" strokeWidth={1.8} />
                     </div>
                     <div>
                       <p className="text-xs text-harmony-ink/70">Локація</p>
-                      <p className="font-medium text-harmony-dark">
+                      <p className="font-medium text-harmony-heading">
                         Україна / Велика Британія (міжнародна освітня ініціатива)
                       </p>
                     </div>
@@ -852,8 +847,8 @@ export default function App() {
 
               {/* Права частина: Форма зворотного зв'язку */}
               <Reveal delayMs={200} className="lg:col-span-7">
-                <div className="bg-white rounded-3xl p-7 sm:p-10 border border-teal-900/10 shadow-[0_12px_34px_-24px_rgba(18,52,59,0.16)]">
-                  <h3 className="font-serif text-2xl font-bold text-harmony-dark mb-2">
+                <div className="bg-white rounded-3xl p-7 sm:p-10 border border-emerald-900/10 shadow-[0_12px_34px_-24px_rgba(24,78,72,0.16)]">
+                  <h3 className="font-serif text-2xl font-bold text-harmony-heading mb-2">
                     Форма зворотного зв’язку
                   </h3>
                   <p className="text-sm text-harmony-ink/70 mb-6">
@@ -865,10 +860,10 @@ export default function App() {
                       role="status"
                       className="p-6 rounded-2xl bg-harmony-sand border border-harmony-emerald/30 space-y-4"
                     >
-                      <div className="flex items-start gap-3 text-harmony-dark">
+                      <div className="flex items-start gap-3 text-harmony-heading">
                         <CheckCircle2 className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5" />
                         <div>
-                          <p className="font-serif font-bold text-lg text-harmony-dark">
+                          <p className="font-serif font-bold text-lg text-harmony-heading">
                             Дякуємо! Ваше повідомлення надіслано.
                           </p>
                           <p className="text-sm text-harmony-ink mt-1 leading-relaxed">
@@ -879,7 +874,7 @@ export default function App() {
                       <button
                         type="button"
                         onClick={() => setContactSubmitted(false)}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-harmony-primary hover:text-harmony-dark transition-colors"
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-harmony-primary hover:text-harmony-primary-hover transition-colors"
                       >
                         Надіслати ще одне повідомлення
                       </button>
@@ -904,7 +899,7 @@ export default function App() {
                               if (contactError) setContactError(null);
                             }}
                             placeholder="Олена Коваленко"
-                            className="w-full px-4 py-3 rounded-xl border border-teal-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-dark placeholder:text-slate-400"
+                            className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400"
                           />
                         </div>
 
@@ -925,7 +920,7 @@ export default function App() {
                               if (contactError) setContactError(null);
                             }}
                             placeholder="olena@school.ua"
-                            className="w-full px-4 py-3 rounded-xl border border-teal-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-dark placeholder:text-slate-400"
+                            className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400"
                           />
                         </div>
                       </div>
@@ -949,7 +944,7 @@ export default function App() {
                               }))
                             }
                             placeholder="Назва школи або громади"
-                            className="w-full px-4 py-3 rounded-xl border border-teal-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-dark placeholder:text-slate-400"
+                            className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400"
                           />
                         </div>
 
@@ -966,7 +961,7 @@ export default function App() {
                             onChange={(e) =>
                               setContactForm((prev) => ({ ...prev, topic: e.target.value }))
                             }
-                            className="w-full px-4 py-3 rounded-xl border border-teal-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-dark"
+                            className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading"
                           >
                             <option value="school">Долучити школу до проєкту</option>
                             <option value="training">Навчання для вчителів</option>
@@ -993,7 +988,7 @@ export default function App() {
                             if (contactError) setContactError(null);
                           }}
                           placeholder="Розкажіть коротко про вашу школу або запит..."
-                          className="w-full px-4 py-3 rounded-xl border border-teal-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-dark placeholder:text-slate-400 resize-y"
+                          className="w-full px-4 py-3 rounded-xl border border-emerald-900/15 bg-harmony-cream/60 focus:bg-white focus:border-harmony-primary focus:ring-2 focus:ring-harmony-emerald/20 outline-none transition-all text-sm text-harmony-heading placeholder:text-slate-400 resize-y"
                         />
                       </div>
 
@@ -1009,7 +1004,7 @@ export default function App() {
 
                       <button
                         type="submit"
-                        className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-dark text-white font-medium text-sm sm:text-base px-8 py-3.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
+                        className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white font-semibold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-xs transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
                       >
                         Надіслати повідомлення
                         <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
@@ -1026,11 +1021,11 @@ export default function App() {
       {/* ФУТЕР */}
       <footer className="bg-harmony-dark text-white">
         {/* Верхня смуга: цитата + 5 іконок цінностей */}
-        <div className="border-b border-white/12">
+        <div className="border-b border-white/15">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-11 lg:py-12">
             <Reveal className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
               <div className="lg:col-span-5 lg:pr-8 lg:border-r lg:border-white/15">
-                <blockquote className="font-serif italic text-lg sm:text-xl leading-relaxed text-slate-100">
+                <blockquote className="font-serif italic text-lg sm:text-xl leading-relaxed text-emerald-50">
                   «Ми не відокремлені від природи. Ми є її частиною. Насправді, ми — це природа.»
                 </blockquote>
                 <p className="text-xs font-medium tracking-wider text-harmony-sun mt-3">
@@ -1045,17 +1040,17 @@ export default function App() {
                     className="group flex flex-col items-center text-center gap-2.5"
                   >
                     <div
-                      className={`w-11 h-11 rounded-full bg-white/10 border border-white/15 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
+                      className={`w-11 h-11 rounded-full bg-white/12 border border-white/18 flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
                         idx === 3 || idx === 4
                           ? 'text-harmony-sun'
                           : idx === 1 || idx === 2
-                            ? 'text-sky-300'
-                            : 'text-teal-200'
+                            ? 'text-sky-200'
+                            : 'text-emerald-200'
                       }`}
                     >
                       {renderCoreValueIcon(value.iconName)}
                     </div>
-                    <span className="text-xs font-medium text-teal-100/90 tracking-wide">
+                    <span className="text-xs font-medium text-emerald-50/90 tracking-wide">
                       {value.label}
                     </span>
                   </div>
@@ -1069,13 +1064,13 @@ export default function App() {
         <div className="relative overflow-hidden">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -left-20 -bottom-24 w-72 h-72 text-harmony-emerald/[0.06]"
+            className="pointer-events-none absolute -left-20 -bottom-24 w-72 h-72 text-white/[0.06]"
           >
             <SeedOfLifeMark className="w-full h-full" />
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-            <div className="grid md:grid-cols-12 gap-10 pb-10 border-b border-white/12 items-center">
+            <div className="grid md:grid-cols-12 gap-10 pb-10 border-b border-white/15 items-center">
               <div className="md:col-span-6 space-y-4">
                 <a
                   href="#top"
@@ -1088,7 +1083,7 @@ export default function App() {
                     className="h-12 sm:h-14 w-auto object-contain bg-transparent logo-hover-organic"
                   />
                 </a>
-                <p className="text-sm text-slate-300 max-w-md leading-relaxed">
+                <p className="text-sm text-emerald-50/85 max-w-md leading-relaxed">
                   Освіта, заснована на принципах природи, що зміцнює добробут, стійкість і віру в майбутнє покоління України.
                 </p>
               </div>
@@ -1097,7 +1092,7 @@ export default function App() {
                 <h4 className="font-serif text-xl font-bold tracking-wide mb-1.5">
                   Будьте на зв’язку
                 </h4>
-                <p className="text-sm text-slate-300 mb-4">
+                <p className="text-sm text-emerald-50/85 mb-4">
                   Підпишіться на нашу розсилку, щоб отримувати методичні матеріали та анонси подій.
                 </p>
 
@@ -1120,11 +1115,11 @@ export default function App() {
                       if (newsletterSubmitted) setNewsletterSubmitted(false);
                     }}
                     placeholder="Ваша електронна адреса"
-                    className="flex-1 px-5 py-3 rounded-full bg-white text-harmony-dark placeholder:text-slate-400 text-sm focus:outline-none"
+                    className="flex-1 px-5 py-3 rounded-full bg-white text-harmony-heading placeholder:text-slate-400 text-sm focus:outline-none"
                   />
                   <button
                     type="submit"
-                    className="bg-harmony-primary hover:bg-harmony-dark text-white font-medium px-6 py-3 rounded-full text-sm transition-colors duration-200 whitespace-nowrap shrink-0"
+                    className="bg-harmony-primary hover:bg-harmony-primary-hover text-white font-semibold px-6 py-3 rounded-full text-sm shadow-xs transition-colors duration-200 whitespace-nowrap shrink-0"
                   >
                     Підписатися
                   </button>
@@ -1133,7 +1128,7 @@ export default function App() {
                 {newsletterError && (
                   <p
                     role="alert"
-                    className="mt-2.5 inline-flex items-center gap-1.5 text-xs text-amber-300"
+                    className="mt-2.5 inline-flex items-center gap-1.5 text-xs text-amber-200"
                   >
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                     <span>{newsletterError}</span>
@@ -1152,7 +1147,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="pt-7 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+            <div className="pt-7 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-emerald-100/75">
               <p>© 2026 The Harmony Project for Ukraine. Усі права захищено.</p>
               <div className="flex flex-wrap items-center gap-6">
                 {NAV_ITEMS.map((item) => (
