@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
-import { NEWS_ARTICLES, type NewsArticle } from '../data/harmonyContent';
+import type { NewsArticle } from '../data/harmonyContent';
 import { MediaFrame } from './MediaFrame';
 
 interface NewsModalProps {
   article: NewsArticle | null;
+  articles: NewsArticle[];
   onClose: () => void;
   onSelectArticle: (article: NewsArticle) => void;
 }
@@ -13,7 +14,7 @@ interface NewsModalProps {
  * Модальне вікно новин із плавним CSS-відкриттям та закриттям
  * (backdrop-blur + scale-95 -> scale-100 + opacity).
  */
-export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps) {
+export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsModalProps) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const [renderedArticle, setRenderedArticle] = useState<NewsArticle | null>(article);
   const [isEntered, setIsEntered] = useState(false);
@@ -59,14 +60,14 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
 
   if (!renderedArticle) return null;
 
-  const currentIndex = NEWS_ARTICLES.findIndex(
+  const currentIndex = articles.findIndex(
     (item) => item.id === renderedArticle.id
   );
   const prevArticle =
-    currentIndex > 0 ? NEWS_ARTICLES[currentIndex - 1] : null;
+    currentIndex > 0 ? articles[currentIndex - 1] : null;
   const nextArticle =
-    currentIndex >= 0 && currentIndex < NEWS_ARTICLES.length - 1
-      ? NEWS_ARTICLES[currentIndex + 1]
+    currentIndex >= 0 && currentIndex < articles.length - 1
+      ? articles[currentIndex + 1]
       : null;
 
   return (
@@ -100,26 +101,36 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
           <X className="w-5 h-5" />
         </button>
 
-        {/* Фото статті */}
-        <MediaFrame
-          src={renderedArticle.image}
-          alt={renderedArticle.imageAlt}
-          placeholderPath={renderedArticle.placeholderPath}
-          className="h-56 sm:h-64 w-full"
-        />
+        {/* Фото статті (за наявності) */}
+        {renderedArticle.image && (
+          <MediaFrame
+            src={renderedArticle.image}
+            alt={renderedArticle.imageAlt}
+            placeholderPath={renderedArticle.placeholderPath}
+            className="h-56 sm:h-64 w-full"
+          />
+        )}
 
         {/* Текст статті */}
         <div className="p-6 sm:p-8 lg:p-10">
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-harmony-sky mb-3">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-[#22A06B] mb-3 pr-10">
             <span>{renderedArticle.category}</span>
-            <span aria-hidden="true" className="text-harmony-ink/35">
-              ·
-            </span>
-            <time className="text-harmony-ink/70">{renderedArticle.date}</time>
-            <span aria-hidden="true" className="text-harmony-ink/35">
-              ·
-            </span>
-            <span className="text-harmony-ink/70">{renderedArticle.readTime}</span>
+            {renderedArticle.date && (
+              <>
+                <span aria-hidden="true" className="text-harmony-ink/35">
+                  ·
+                </span>
+                <time className="text-harmony-ink/70">{renderedArticle.date}</time>
+              </>
+            )}
+            {renderedArticle.readTime && (
+              <>
+                <span aria-hidden="true" className="text-harmony-ink/35">
+                  ·
+                </span>
+                <span className="text-harmony-ink/70">{renderedArticle.readTime}</span>
+              </>
+            )}
           </div>
 
           <h3
@@ -129,15 +140,17 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
             {renderedArticle.title}
           </h3>
 
-          <div className="space-y-4 text-harmony-ink text-sm sm:text-base leading-relaxed">
+          <div className="space-y-4 text-harmony-ink text-sm sm:text-base leading-relaxed whitespace-pre-line text-justify hyphens-auto">
             {renderedArticle.paragraphs.map((paragraph, idx) => (
               <p key={idx}>{paragraph}</p>
             ))}
           </div>
 
-          <div className="mt-6 p-5 rounded-2xl bg-harmony-sage/85 border border-emerald-900/10 text-sm text-harmony-heading leading-relaxed">
-            {renderedArticle.highlight}
-          </div>
+          {renderedArticle.highlight && (
+            <div className="mt-6 p-5 rounded-2xl bg-harmony-sage/85 border border-emerald-900/10 text-sm text-harmony-heading leading-relaxed text-justify hyphens-auto">
+              {renderedArticle.highlight}
+            </div>
+          )}
 
           <div className="mt-8 pt-6 border-t border-emerald-900/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -166,7 +179,7 @@ export function NewsModal({ article, onClose, onSelectArticle }: NewsModalProps)
             <a
               href="#contacts"
               onClick={onClose}
-              className="inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-xs transition-colors whitespace-nowrap"
+              className="font-ui inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm font-semibold tracking-tight px-5 py-2.5 rounded-full shadow-xs transition-colors whitespace-nowrap"
             >
               Зв’язатися з командою
               <ArrowRight className="w-4 h-4" />

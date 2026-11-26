@@ -10,13 +10,14 @@
   --color-harmony-sage: #D4EFE3;          /* Світла підкладка під іконки та теги */
   --color-harmony-cream: #F7FBF9;         /* Повітряний м'ятно-білий — основний фон сторінки */
   --color-harmony-sand: #EAF6F0;          /* Ніжний світло-зелений для вторинних секцій */
-  --color-harmony-sky: #3898EC;           /* Чистий небесно-блакитний акцент */
+  --color-harmony-sky: #22A06B;           /* Свіжий світло-зелений акцент (замість блакитного) */
   --color-harmony-sun: #E6A15C;           /* Теплий бурштин (цифри статистики, акценти у футері) */
   --color-harmony-ink: #3A5450;           /* М'який графітово-зелений для комфортного читання тексту */
 
   /* Типографіка */
   --font-serif: "Playfair Display", Georgia, Cambria, serif;
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-ui: "Manrope", "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   /* Органічна крива анімацій */
   --ease-organic: cubic-bezier(0.22, 1, 0.36, 1);
@@ -32,6 +33,11 @@
     background-color: var(--color-harmony-cream);
     color: var(--color-harmony-ink);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  nav,
+  button {
+    font-family: var(--font-ui);
   }
 
   h1, h2, h3, h4 {
