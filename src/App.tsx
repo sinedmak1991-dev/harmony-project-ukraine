@@ -28,6 +28,7 @@ import {
   Users,
   Wind,
 } from 'lucide-react';
+import { AccessibilityWidget } from './components/AccessibilityWidget';
 import { Header, SeedOfLifeMark } from './components/Header';
 import { ImpactCounter } from './components/ImpactCounter';
 import { JoinModal } from './components/JoinModal';
@@ -68,73 +69,73 @@ function getStaggerDelay(index: number): 0 | 100 | 200 | 300 | 400 | 500 {
 function renderPillarIcon(name: 'heart' | 'compass' | 'flower' | 'sparkles') {
   switch (name) {
     case 'heart':
-      return <Heart className="w-5 h-5" strokeWidth={1.75} />;
+      return <Heart className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />;
     case 'compass':
-      return <Compass className="w-5 h-5" strokeWidth={1.75} />;
+      return <Compass className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />;
     case 'flower':
-      return <Flower2 className="w-5 h-5" strokeWidth={1.75} />;
+      return <Flower2 className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />;
     case 'sparkles':
-      return <Sparkles className="w-5 h-5" strokeWidth={1.75} />;
+      return <Sparkles className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />;
   }
 }
 
 function renderImpactIcon(name: 'users' | 'school' | 'globe') {
   switch (name) {
     case 'users':
-      return <Users className="w-5 h-5" strokeWidth={1.75} />;
+      return <Users className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />;
     case 'school':
-      return <School className="w-5 h-5" strokeWidth={1.75} />;
+      return <School className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />;
     case 'globe':
-      return <Globe className="w-5 h-5" strokeWidth={1.75} />;
+      return <Globe className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />;
   }
 }
 
 function renderSchoolFeatureIcon(name: 'users' | 'leaf' | 'book' | 'heart' | 'sprout') {
   switch (name) {
     case 'users':
-      return <Users className="w-6 h-6" strokeWidth={1.6} />;
+      return <Users className="w-6 h-6" strokeWidth={1.6} aria-hidden="true" />;
     case 'leaf':
-      return <Leaf className="w-6 h-6" strokeWidth={1.6} />;
+      return <Leaf className="w-6 h-6" strokeWidth={1.6} aria-hidden="true" />;
     case 'book':
-      return <BookOpen className="w-6 h-6" strokeWidth={1.6} />;
+      return <BookOpen className="w-6 h-6" strokeWidth={1.6} aria-hidden="true" />;
     case 'heart':
-      return <HeartHandshake className="w-6 h-6" strokeWidth={1.6} />;
+      return <HeartHandshake className="w-6 h-6" strokeWidth={1.6} aria-hidden="true" />;
     case 'sprout':
-      return <Sprout className="w-6 h-6" strokeWidth={1.6} />;
+      return <Sprout className="w-6 h-6" strokeWidth={1.6} aria-hidden="true" />;
   }
 }
 
 function renderWellbeingIcon(name: 'wind' | 'handshake' | 'focus' | 'shield' | 'sun') {
   switch (name) {
     case 'wind':
-      return <Wind className="w-5 h-5" strokeWidth={1.7} />;
+      return <Wind className="w-5 h-5" strokeWidth={1.7} aria-hidden="true" />;
     case 'handshake':
-      return <HeartHandshake className="w-5 h-5" strokeWidth={1.7} />;
+      return <HeartHandshake className="w-5 h-5" strokeWidth={1.7} aria-hidden="true" />;
     case 'focus':
-      return <Focus className="w-5 h-5" strokeWidth={1.7} />;
+      return <Focus className="w-5 h-5" strokeWidth={1.7} aria-hidden="true" />;
     case 'shield':
-      return <ShieldCheck className="w-5 h-5" strokeWidth={1.7} />;
+      return <ShieldCheck className="w-5 h-5" strokeWidth={1.7} aria-hidden="true" />;
     case 'sun':
-      return <Sun className="w-5 h-5" strokeWidth={1.7} />;
+      return <Sun className="w-5 h-5" strokeWidth={1.7} aria-hidden="true" />;
   }
 }
 
 function renderHarmonyPrincipleIcon(name: HarmonyPrincipleItem['iconName']) {
   switch (name) {
     case 'link':
-      return <Link2 className="w-5 h-5" strokeWidth={1.6} />;
+      return <Link2 className="w-5 h-5" strokeWidth={1.6} aria-hidden="true" />;
     case 'cycle':
-      return <RefreshCw className="w-5 h-5" strokeWidth={1.6} />;
+      return <RefreshCw className="w-5 h-5" strokeWidth={1.6} aria-hidden="true" />;
     case 'flower':
-      return <Flower2 className="w-5 h-5" strokeWidth={1.6} />;
+      return <Flower2 className="w-5 h-5" strokeWidth={1.6} aria-hidden="true" />;
     case 'leaf':
-      return <Leaf className="w-5 h-5" strokeWidth={1.6} />;
+      return <Leaf className="w-5 h-5" strokeWidth={1.6} aria-hidden="true" />;
     case 'heart':
-      return <Heart className="w-5 h-5" strokeWidth={1.6} />;
+      return <Heart className="w-5 h-5" strokeWidth={1.6} aria-hidden="true" />;
     case 'geometry':
-      return <Hexagon className="w-5 h-5" strokeWidth={1.6} />;
+      return <Hexagon className="w-5 h-5" strokeWidth={1.6} aria-hidden="true" />;
     case 'unity':
-      return <Sun className="w-5 h-5" strokeWidth={1.6} />;
+      return <Sun className="w-5 h-5" strokeWidth={1.6} aria-hidden="true" />;
   }
 }
 
@@ -282,13 +283,21 @@ export default function App() {
 
   return (
     <div id="top" className="min-h-screen flex flex-col bg-harmony-cream text-harmony-ink">
+      {/* Швидкий перехід для клавіатурної навігації (WCAG 2.1 AA) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[60] focus:inline-flex focus:items-center focus:gap-2 focus:px-5 focus:py-3 focus:rounded-full focus:bg-[#184E48] focus:text-white focus:font-ui focus:text-sm focus:font-semibold focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#22A06B] focus:ring-offset-2"
+      >
+        Перейти до основного вмісту
+      </a>
+
       {/* НАВІГАЦІЯ */}
       <Header
         activeSection={activeSection}
         onOpenJoinModal={() => setIsJoinModalOpen(true)}
       />
 
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 focus:outline-none">
         {/* 1. HERO СЕКЦІЯ (Освіта в гармонії з життям + макрофото пухнастої кульбаби праворуч) */}
         <section className="relative overflow-hidden bg-[#F7FBF9] border-b border-emerald-900/10">
           {/* HERO IMAGE: Кульбаба (можна замінити на власне фото images/dandelion-hero.jpg) */}
@@ -328,7 +337,7 @@ export default function App() {
                     className="group font-ui inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm sm:text-base font-semibold tracking-tight px-6 py-3.5 rounded-full shadow-xs transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
                   >
                     Відкрити підхід
-                    <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                    <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
                   </a>
                   <a
                     href="#schools"
@@ -340,7 +349,7 @@ export default function App() {
 
                 {/* Слоган під кнопками (як на початковому макеті) */}
                 <div className="pt-5 border-t border-emerald-900/10 flex items-center gap-2.5 text-xs sm:text-sm text-harmony-ink max-w-lg">
-                  <Sprout className="w-4 h-4 text-harmony-primary shrink-0" strokeWidth={2} />
+                  <Sprout className="w-4 h-4 text-harmony-primary shrink-0" strokeWidth={2} aria-hidden="true" />
                   <span>
                     <strong className="font-semibold text-harmony-heading">Природа — наш учитель.</strong>{' '}
                     Вкорінені у цінностях, відкриті до світу.
@@ -445,7 +454,7 @@ export default function App() {
                       className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-[#22A06B] hover:text-[#1A7F56] transition-colors"
                     >
                       Дізнатися більше
-                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
                     </a>
                   </div>
                   <MediaFrame
@@ -473,7 +482,7 @@ export default function App() {
                       className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-[#22A06B] hover:text-[#1A7F56] transition-colors"
                     >
                       Читати більше
-                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
                     </a>
                   </div>
                   <MediaFrame
@@ -537,7 +546,7 @@ export default function App() {
                       className="inline-flex items-center gap-2 text-sm font-medium text-emerald-200 hover:text-white transition-colors"
                     >
                       Історії впливу
-                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
                     </a>
                   </div>
                 </div>
@@ -618,7 +627,7 @@ export default function App() {
                 </div>
 
                 <div className="mt-6 p-4 sm:p-5 rounded-2xl bg-harmony-sand/85 border border-harmony-emerald/20 flex items-center gap-3.5 text-xs sm:text-sm text-harmony-heading">
-                  <Sprout className="w-5 h-5 text-harmony-primary shrink-0" strokeWidth={1.85} />
+                  <Sprout className="w-5 h-5 text-harmony-primary shrink-0" strokeWidth={1.85} aria-hidden="true" />
                   <p className="leading-relaxed text-justify hyphens-auto">
                     <strong className="font-semibold">Психологічний добробут і стійкість</strong> — ключовий пріоритет Проєкту «Гармонія», особливо важливий для українських дітей і педагогів сьогодні.
                   </p>
@@ -697,7 +706,7 @@ export default function App() {
                   className="relative shrink-0 inline-flex items-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white font-semibold text-sm sm:text-base px-7 py-3.5 rounded-full shadow-xs transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-md active:scale-[0.98] whitespace-nowrap"
                 >
                   Долучитися
-                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
                 </button>
               </div>
             </Reveal>
@@ -753,7 +762,7 @@ export default function App() {
             {isLoadingNews ? (
               <div role="status" aria-live="polite" className="space-y-6">
                 <div className="inline-flex items-center gap-2.5 text-sm font-medium text-harmony-heading bg-harmony-sand/80 border border-emerald-900/10 px-4 py-2 rounded-full">
-                  <Loader2 className="w-4 h-4 text-harmony-primary animate-spin" />
+                  <Loader2 className="w-4 h-4 text-harmony-primary animate-spin" aria-hidden="true" />
                   <span>Завантаження новин...</span>
                 </div>
 
@@ -782,7 +791,7 @@ export default function App() {
               <Reveal>
                 <div className="max-w-2xl mx-auto rounded-3xl bg-harmony-sand border border-emerald-900/10 px-7 sm:px-10 py-10 sm:py-12 text-center shadow-[0_10px_30px_-24px_rgba(24,78,72,0.14)]">
                   <div className="w-12 h-12 rounded-2xl bg-white border border-emerald-900/10 text-harmony-primary flex items-center justify-center mx-auto mb-5">
-                    <Sparkles className="w-5 h-5" strokeWidth={1.75} />
+                    <Sparkles className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
                   </div>
                   <h3 className="font-serif text-2xl font-bold text-harmony-heading mb-2.5">
                     Актуальні новини скоро з'являться
@@ -860,7 +869,7 @@ export default function App() {
                             className="inline-flex items-center gap-1.5 text-sm font-semibold text-harmony-primary hover:text-harmony-primary-hover transition-colors"
                           >
                             Читати далі
-                            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
                           </button>
                         </div>
                       </div>
@@ -897,7 +906,7 @@ export default function App() {
                 <div className="space-y-4 pt-2">
                   <div className="flex items-start gap-4">
                     <div className="w-11 h-11 rounded-full bg-white text-[#22A06B] border border-emerald-900/10 flex items-center justify-center shrink-0">
-                      <Mail className="w-5 h-5" strokeWidth={1.8} />
+                      <Mail className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                     </div>
                     <div>
                       <p className="text-xs text-harmony-ink/70">Електронна пошта</p>
@@ -912,7 +921,7 @@ export default function App() {
 
                   <div className="flex items-start gap-4">
                     <div className="w-11 h-11 rounded-full bg-white text-[#22A06B] border border-emerald-900/10 flex items-center justify-center shrink-0">
-                      <Phone className="w-5 h-5" strokeWidth={1.8} />
+                      <Phone className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                     </div>
                     <div>
                       <p className="text-xs text-harmony-ink/70">Телефон координатора</p>
@@ -927,7 +936,7 @@ export default function App() {
 
                   <div className="flex items-start gap-4">
                     <div className="w-11 h-11 rounded-full bg-white text-harmony-emerald border border-emerald-900/10 flex items-center justify-center shrink-0">
-                      <MapPin className="w-5 h-5" strokeWidth={1.8} />
+                      <MapPin className="w-5 h-5" strokeWidth={1.8} aria-hidden="true" />
                     </div>
                     <div>
                       <p className="text-xs text-harmony-ink/70">Локація</p>
@@ -955,7 +964,7 @@ export default function App() {
                       className="p-6 rounded-2xl bg-harmony-sand border border-harmony-emerald/30 space-y-4"
                     >
                       <div className="flex items-start gap-3 text-harmony-heading">
-                        <CheckCircle2 className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5" aria-hidden="true" />
                         <div>
                           <p className="font-serif font-bold text-lg text-harmony-heading">
                             Дякуємо! Ваше звернення успішно надіслано.
@@ -1119,7 +1128,7 @@ export default function App() {
                           role="alert"
                           className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm"
                         >
-                          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                          <AlertCircle className="w-4 h-4 shrink-0 text-red-600" aria-hidden="true" />
                           <span>{contactError}</span>
                         </div>
                       )}
@@ -1131,13 +1140,13 @@ export default function App() {
                       >
                         {isContactSubmitting ? (
                           <>
-                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                             Надсилання...
                           </>
                         ) : (
                           <>
                             Надіслати повідомлення
-                            <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                            <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
                           </>
                         )}
                       </button>
@@ -1226,7 +1235,7 @@ export default function App() {
                   className="font-ui inline-flex items-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-[15px] font-semibold tracking-tight px-6 py-3 rounded-full shadow-xs transition-all duration-200 hover:-translate-y-0.5"
                 >
                   <span>Зв’язатися з нами</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </a>
               </div>
             </div>
@@ -1271,6 +1280,9 @@ export default function App() {
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
       />
+
+      {/* МОДУЛЬ ВЕБДОСТУПНОСТІ (ACCESSIBILITY WIDGET) */}
+      <AccessibilityWidget />
     </div>
   );
 }

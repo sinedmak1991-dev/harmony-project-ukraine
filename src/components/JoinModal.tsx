@@ -149,7 +149,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
           aria-label="Закрити форму"
           className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/95 hover:bg-harmony-sand text-harmony-heading border border-emerald-900/10 flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm disabled:opacity-50"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" aria-hidden="true" />
         </button>
 
         <div className="pr-10 mb-6">
@@ -173,7 +173,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
             className="p-6 rounded-2xl bg-harmony-sand border border-harmony-emerald/30 space-y-4"
           >
             <div className="flex items-start gap-3 text-harmony-heading">
-              <CheckCircle2 className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-6 h-6 text-harmony-emerald shrink-0 mt-0.5" aria-hidden="true" />
               <div>
                 <p className="font-serif font-bold text-lg text-harmony-heading">
                   Дякуємо! Ваше звернення успішно надіслано.
@@ -315,7 +315,7 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
                 role="alert"
                 className="flex items-center gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm"
               >
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" aria-hidden="true" />
                 <span>{error}</span>
               </div>
             )}
@@ -327,13 +327,13 @@ export function JoinModal({ isOpen, onClose }: JoinModalProps) {
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
                   Надсилання...
                 </>
               ) : (
                 <>
                   Надіслати заявку
-                  <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                  <Send className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
                 </>
               )}
             </button>

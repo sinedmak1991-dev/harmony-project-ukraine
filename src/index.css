@@ -44,10 +44,21 @@
     text-wrap: balance;
   }
 
-  /* Видимий фокус для доступності клавіатури */
+  /* Видимий фокус для доступності клавіатури (WCAG 2.1 AA) */
   :focus-visible {
-    outline: 2px solid var(--color-harmony-primary);
+    outline: 2px solid #22A06B;
     outline-offset: 2px;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid #22A06B;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(34, 160, 107, 0.22);
   }
 }
 
@@ -152,7 +163,7 @@
   will-change: transform;
 }
 
-/* Повага до налаштування зменшеної анімації */
+/* Повага до налаштування зменшеної анімації ОС */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -175,4 +186,131 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ============================================================================
+ * МОДУЛЬ ВЕБДОСТУПНОСТІ (ACCESSIBILITY / БЕЗБАР'ЄРНІСТЬ — WCAG 2.1 AA)
+ * ============================================================================ */
+
+/* 1. Масштабування базового розміру шрифту */
+html.a11y-font-115 {
+  font-size: 115%;
+}
+
+html.a11y-font-130 {
+  font-size: 130%;
+}
+
+/* 2. Високий контраст */
+html.a11y-high-contrast {
+  --color-harmony-cream: #FFFFFF;
+  --color-harmony-sand: #F0F7F4;
+  --color-harmony-sage: #D4F0E2;
+  --color-harmony-ink: #0B1F1C;
+  --color-harmony-heading: #062924;
+  --color-harmony-dark: #0A2723;
+  --color-harmony-primary: #147A50;
+  --color-harmony-primary-hover: #0E5E3D;
+}
+
+html.a11y-high-contrast body {
+  background-color: #FFFFFF;
+  color: #0B1F1C;
+}
+
+html.a11y-high-contrast article,
+html.a11y-high-contrast input,
+html.a11y-high-contrast select,
+html.a11y-high-contrast textarea {
+  border-color: #184E48 !important;
+  border-width: 1.5px;
+}
+
+html.a11y-high-contrast header {
+  background-color: #FFFFFF !important;
+  border-bottom: 2px solid #184E48 !important;
+}
+
+html.a11y-high-contrast footer,
+html.a11y-high-contrast .bg-harmony-dark {
+  background-color: #07221E !important;
+  color: #FFFFFF !important;
+}
+
+html.a11y-high-contrast footer p,
+html.a11y-high-contrast footer blockquote,
+html.a11y-high-contrast footer span,
+html.a11y-high-contrast .bg-harmony-dark p,
+html.a11y-high-contrast .bg-harmony-dark div {
+  color: #FFFFFF;
+}
+
+/* 3. Режим зручного читання (дислексія-френдлі) */
+html.a11y-readable-font body,
+html.a11y-readable-font p,
+html.a11y-readable-font li,
+html.a11y-readable-font blockquote,
+html.a11y-readable-font input,
+html.a11y-readable-font textarea,
+html.a11y-readable-font select {
+  font-family: var(--font-ui), Arial, sans-serif !important;
+  font-style: normal !important;
+  line-height: 1.85 !important;
+  letter-spacing: 0.04em !important;
+  word-spacing: 0.14em !important;
+}
+
+html.a11y-readable-font .text-justify {
+  text-align: left !important;
+  hyphens: none !important;
+}
+
+/* 4. Підсвічування посилань і кнопок */
+html.a11y-highlight-links a[href],
+html.a11y-highlight-links button {
+  outline: 2px solid #22A06B !important;
+  outline-offset: 2px !important;
+}
+
+html.a11y-highlight-links a[href]:not([class*="rounded-full"]) {
+  text-decoration: underline !important;
+  text-underline-offset: 4px !important;
+  text-decoration-thickness: 2px !important;
+}
+
+html.a11y-highlight-links footer a[href],
+html.a11y-highlight-links footer button,
+html.a11y-highlight-links .bg-harmony-dark a[href],
+html.a11y-highlight-links .bg-harmony-dark button {
+  outline: 2px solid #6EE7B7 !important;
+  outline-offset: 2px !important;
+}
+
+/* 5. Зупинити анімації (ручний перемикач) */
+html.a11y-reduce-motion {
+  scroll-behavior: auto !important;
+}
+
+html.a11y-reduce-motion .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+html.a11y-reduce-motion .hero-enter,
+html.a11y-reduce-motion .hero-enter-delayed,
+html.a11y-reduce-motion .dandelion-breeze,
+html.a11y-reduce-motion .logo-hover-organic,
+html.a11y-reduce-motion .seed-spin-hover {
+  animation: none !important;
+  transform: none !important;
+}
+
+html.a11y-reduce-motion *,
+html.a11y-reduce-motion *::before,
+html.a11y-reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

@@ -98,7 +98,7 @@ export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsM
           aria-label="Закрити новину"
           className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/95 hover:bg-harmony-sand text-harmony-heading border border-emerald-900/10 flex items-center justify-center transition-all duration-200 hover:scale-105 shadow-sm"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" aria-hidden="true" />
         </button>
 
         {/* Фото статті (за наявності) */}
@@ -160,7 +160,7 @@ export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsM
                   onClick={() => onSelectArticle(prevArticle)}
                   className="inline-flex items-center gap-1.5 text-xs font-medium text-harmony-ink hover:text-harmony-heading px-3.5 py-2 rounded-full border border-emerald-900/15 hover:bg-harmony-cream transition-colors"
                 >
-                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
                   Попередня
                 </button>
               )}
@@ -171,7 +171,7 @@ export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsM
                   className="inline-flex items-center gap-1.5 text-xs font-medium text-harmony-ink hover:text-harmony-heading px-3.5 py-2 rounded-full border border-emerald-900/15 hover:bg-harmony-cream transition-colors"
                 >
                   Наступна
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -182,7 +182,7 @@ export function NewsModal({ article, articles, onClose, onSelectArticle }: NewsM
               className="font-ui inline-flex items-center justify-center gap-2 bg-harmony-primary hover:bg-harmony-primary-hover text-white text-sm font-semibold tracking-tight px-5 py-2.5 rounded-full shadow-xs transition-colors whitespace-nowrap"
             >
               Зв’язатися з командою
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </a>
           </div>
         </div>

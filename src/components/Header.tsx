@@ -123,7 +123,11 @@ export function Header({ activeSection, onOpenJoinModal }: HeaderProps) {
                   mobileMenuOpen ? 'rotate-90' : 'rotate-0'
                 }`}
               >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5" aria-hidden="true" />
+                ) : (
+                  <Menu className="w-5 h-5" aria-hidden="true" />
+                )}
               </span>
             </button>
           </div>

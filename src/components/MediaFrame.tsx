@@ -34,7 +34,7 @@ export function MediaFrame({
         aria-label={alt}
       >
         <div className="w-11 h-11 rounded-full bg-white/85 flex items-center justify-center text-harmony-emerald mb-3">
-          <Sprout className="w-5 h-5" strokeWidth={1.75} />
+          <Sprout className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
         </div>
         <p className="text-xs font-medium text-harmony-heading/85 max-w-[220px] leading-relaxed">
           {alt}
